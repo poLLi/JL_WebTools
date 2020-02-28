@@ -1,0 +1,21 @@
+{
+    "name": "jl_webtools",
+    "version": "1.0.0",
+    "description": "Just-Look Network web tools ",
+    "author": "PoLLi",
+    "private": true,
+    "scripts": {
+        "generate": "(cd ./frontend/ && npm run generate:gh-pages)",
+        "deploy": "push-dir --dir=docs --branch=master --cleanup"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Just-Look-Network/JL_WebTools.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Just-Look-Network/JL_WebTools/issues"
+    },
+    "devDependencies": {
+        "push-dir": "^0.4.1"
+    }
+}
