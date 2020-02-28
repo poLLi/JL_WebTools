@@ -1,0 +1,100 @@
+#mainNav {
+    box-shadow: $box-shadow;
+    background-color: $gray-900;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    transition: background-color 0.2s ease, padding 0.2s ease;
+
+    .navbar-brand {
+        font-family: $font-family-sans-serif;
+        font-weight: $font-weight-medium;
+        color: $gray-100;
+    }
+
+    .navbar-nav {
+        .nav-item {
+            .nav-link {
+                color: $gray-400;
+                font-family: $font-family-sans-serif;
+                font-weight: $font-weight-medium;
+                font-size: 0.9rem;
+                padding: 0.75rem 0;
+
+                &:hover,
+                &:active {
+                    color: $primary;
+                }
+
+                &.active {
+                    color: $primary !important;
+                }
+            }
+        }
+    }
+    @include media-breakpoint-up(lg) {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        background-color: rgba(33, 37, 41, 0.65);
+
+        .navbar-brand {
+            color: fade-out($white, 0.3);
+
+            &:hover {
+                color: $white;
+            }
+        }
+
+        .navbar-nav {
+            .nav-item {
+                .nav-link {
+                    color: fade-out($white, 0.3);
+                    padding: 0 1rem;
+                    border-bottom: none;
+                    transition: all 0.2s ease-in-out;
+
+                    &:hover {
+                        color: $primary;
+                    }
+
+                    &.active {
+                        color: $white !important;
+                        border-bottom: 2px solid $primary;
+                    }
+                }
+
+                &:last-child {
+                    .nav-link {
+                        padding-right: 0rem;
+                    }
+                }
+            }
+        }
+
+        &.navbar-scrolled {
+            box-shadow: $box-shadow;
+            background-color: $gray-900;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+
+            .navbar-brand {
+                color: $gray-100;
+
+                &:hover {
+                    color: $primary;
+                }
+            }
+
+            .navbar-nav {
+                .nav-item {
+                    .nav-link {
+                        color: $gray-400;
+
+                        &:hover {
+                            color: $primary;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
