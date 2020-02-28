@@ -10,7 +10,8 @@
         "start": "nuxt start",
         "generate": "nuxt generate",
         "build:gh-pages": "DEPLOY_ENV=GH_PAGES nuxt build",
-        "generate:gh-pages": "cross-env DEPLOY_ENV=GH_PAGES nuxt generate"
+        "generate:gh-pages": "cross-env DEPLOY_ENV=GH_PAGES nuxt generate",
+        "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup"
     },
     "dependencies": {
         "@nuxtjs/axios": "^5.3.6",
@@ -25,6 +26,7 @@
         "eslint-plugin-prettier": "^3.1.2",
         "node-sass": "^4.13.1",
         "prettier": "^1.19.1",
+        "push-dir": "^0.4.1",
         "sass-loader": "^8.0.2"
     }
 }

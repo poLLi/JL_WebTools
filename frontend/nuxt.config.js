@@ -93,7 +93,5 @@ export default {
     /*
      ** Generate configuration
      */
-    generate: {
-        dir: '../docs'
-    }
+    generate: {}
 };
