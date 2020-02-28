@@ -1,0 +1,31 @@
+header.mainhead {
+    padding-top: 10rem;
+    padding-bottom: calc(10rem - #{$navbar-height});
+    background: linear-gradient(to bottom, #{fade-out($brown, 0.85)} 20%, #{fade-out($brown, 0.2)} 80%),
+        url(../img/bg-mainhead.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+    min-height: 40rem;
+    height: 100vh;
+    color: $white;
+
+    @include media-breakpoint-up(lg) {
+        padding-top: $navbar-height;
+        padding-bottom: 0;
+    }
+
+    h1 {
+        text-shadow: 2px 2px 3px #000;
+    }
+
+    h2 {
+        text-shadow: 2px 2px 3px #000;
+    }
+
+    p {
+        font-size: 1.5rem;
+        text-shadow: 2px 2px 3px #000;
+    }
+}

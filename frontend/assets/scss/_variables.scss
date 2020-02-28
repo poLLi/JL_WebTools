@@ -1,6 +1,29 @@
 // ---------------------------------------
-// Just-Look Network: GTA RP
+// Just-Look Network: Web Tools
 // Variables Overrides
 //
 // For a list of Bootstrap variables you can override, look at node_modules\bootstrap\scss\_variables.scss
 // ---------------------------------------
+// Global Settings
+$enable-rounded: false;
+
+// Theme Color definitions
+$orange: #f4623a !default;
+$brown: #5c4d42 !default;
+
+$theme-colors: () !default;
+$theme-colors: map-merge(
+    (
+        'brown': $brown
+    ),
+    $theme-colors
+);
+
+$primary: $orange !default;
+
+// ---------------------------------------
+// Just-Look Network: Web Tools
+// Custom Variables
+// ---------------------------------------
+$font-weight-medium: 500;
+$navbar-height: 72px;
