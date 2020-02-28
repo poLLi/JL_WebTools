@@ -1,10 +1,22 @@
+const routerBase =
+    process.env.DEPLOY_ENV === 'GH_PAGES'
+        ? {
+              router: {
+                  base: '/JL_WebTools/',
+                  routeNameSplitter: '/'
+              }
+          }
+        : {
+              router: {
+                  routeNameSplitter: '/'
+              }
+          };
+
 export default {
     /*
      ** Router Settings
      */
-    router: {
-        routeNameSplitter: '/'
-    },
+    ...routerBase,
 
     mode: 'universal',
 
@@ -76,5 +88,10 @@ export default {
         extractCSS: {
             allChunks: true
         }
-    }
+    },
+
+    /*
+     ** Generate configuration
+     */
+    generate: {}
 };
