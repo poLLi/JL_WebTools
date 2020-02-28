@@ -113,6 +113,8 @@
                 </b-row>
             </b-container>
         </section>
+
+        <canvas hidden id="canvas" width="500px" height="500px"></canvas>
     </div>
 </template>
 
