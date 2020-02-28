@@ -1,1 +1,35 @@
 // Custom Scss Styles
+
+// Typography
+.text-white-75 {
+    color: fade-out($white, 0.25);
+}
+
+// Custom horizontal rules
+hr.divider {
+    max-width: 15rem;
+    border-width: 0.2rem;
+    border-color: $primary;
+}
+
+hr.light {
+    border-color: $white;
+}
+
+// Button restyling
+.btn {
+    font-family: $font-family-sans-serif;
+}
+
+.btn-xl {
+    padding: 1.25rem 2.25rem;
+    font-size: 0.85rem;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    border: none;
+}
+
+// Page section padding
+.page-section {
+    padding: 5rem 0;
+}
