@@ -1,14 +1,25 @@
 // Custom Scss Styles
 
 .first-section {
-    padding-top: 8rem;
+    padding-top: 10rem;
+    padding-bottom: calc(10rem - #{$navbar-height});
+    min-height: 40rem;
+
+    @include media-breakpoint-up(lg) {
+        padding-top: calc(4rem + #{$navbar-height});
+        padding-bottom: 0;
+        height: 10vh;
+    }
+}
+
+.page-section {
+    padding: 5rem 0;
 }
 
 .text-white-75 {
     color: fade-out($white, 0.25);
 }
 
-// Custom horizontal rules
 hr.divider {
     max-width: 15rem;
     border-width: 0.2rem;
@@ -19,7 +30,6 @@ hr.light {
     border-color: $white;
 }
 
-// Button restyling
 .btn {
     font-family: $font-family-sans-serif;
 }
@@ -30,9 +40,4 @@ hr.light {
     font-weight: $font-weight-medium;
     text-transform: uppercase;
     border: none;
-}
-
-// Page section padding
-.page-section {
-    padding: 5rem 0;
 }
