@@ -128,7 +128,7 @@
 import { Chrome } from 'vue-color';
 
 export default {
-    layout: 'tool',
+    transition: 'page',
 
     components: {
         'chrome-picker': Chrome

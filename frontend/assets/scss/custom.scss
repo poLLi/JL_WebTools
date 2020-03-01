@@ -41,3 +41,13 @@ hr.light {
     text-transform: uppercase;
     border: none;
 }
+
+.page-enter-active,
+.page-leave-active {
+    transition: all 0.2s ease-in-out;
+}
+.page-enter,
+.page-leave-active {
+    opacity: 0;
+    transform: translateY(2000px);
+}
