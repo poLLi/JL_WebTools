@@ -1,4 +1,6 @@
 {
+  "connection": "default",
+  "collectionName": "urls",
   "info": {
     "name": "url"
   },
@@ -12,13 +14,12 @@
       "required": true
     },
     "shortUrl": {
-      "type": "string"
+      "type": "string",
+      "unique": true
     },
     "clicks": {
       "type": "biginteger",
       "default": "0"
     }
-  },
-  "connection": "default",
-  "collectionName": "urls"
+  }
 }
