@@ -1,0 +1,24 @@
+{
+  "info": {
+    "name": "url"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true
+  },
+  "attributes": {
+    "baseUrl": {
+      "type": "string",
+      "required": true
+    },
+    "shortUrl": {
+      "type": "string"
+    },
+    "clicks": {
+      "type": "biginteger",
+      "default": "0"
+    }
+  },
+  "connection": "default",
+  "collectionName": "urls"
+}
