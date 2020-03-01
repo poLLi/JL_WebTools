@@ -87,11 +87,13 @@
                         <h2 class="text-white mt-0">Just-Look Network Branding</h2>
                         <hr class="divider light my-4" />
                         <p class="text-white">
-                            Just-Look ist eine Marke, die viel Wert auf Spiel, Spaß und Spannung legt und sich selbst
-                            nicht immer all zu ernst nimmt. Trotzdem ist uns höchste Qualität extrem wichtig. Wenn du
-                            unser Design oder Artwork verwenden willst, dann bitte mit Stil – und lass uns bitte vorher
-                            ein Auge drauf werfen.
+                            Just-Look Network is a playful and fun brand that doesn't take itself too seriously. That
+                            said, we're keen on keeping things quality so if you're gonna use our art for something
+                            please keep it tasteful and send it our way for approval.
                         </p>
+                        <a class="btn btn-light btn-xl" href="http://discord.just-look.net/" target="_blank">
+                            join Discord
+                        </a>
                     </b-col>
                 </b-row>
             </b-container>
@@ -101,13 +103,17 @@
             <b-container>
                 <b-row align-h="center">
                     <b-col lg="8" class="text-center">
-                        <h2 class="text-white mt-0">Das reicht dir noch nicht?</h2>
+                        <h2 class="text-white mt-0">Its not enough ?</h2>
                         <hr class="divider light my-4" />
                         <p class="text-white">
-                            Hier kannst du unser gesamtes Press-Kit herunterladen (App-Icons, Banner, Logos und mehr)
+                            Check out our "Press Kit" with all of the Logos, Art, app icons and so on...
                         </p>
-                        <a class="btn btn-light btn-xl" href="#">
-                            Press-Kit Herunterladen
+                        <a
+                            class="btn btn-light btn-xl"
+                            href="https://drive.google.com/drive/folders/0B-4jrDNg4jW_flBHUWpmMHdKOGZJeVVmaWZscVBsVzJjM2ZfNngtOWpVTG5RZG5IVndsU0E?usp=sharing"
+                            target="_blank"
+                        >
+                            Press-Kit
                         </a>
                     </b-col>
                 </b-row>
@@ -122,7 +128,7 @@
 import { Chrome } from 'vue-color';
 
 export default {
-    layout: 'tool',
+    transition: 'page',
 
     components: {
         'chrome-picker': Chrome

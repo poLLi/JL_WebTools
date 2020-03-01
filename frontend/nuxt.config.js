@@ -3,12 +3,16 @@ const routerBase =
         ? {
               router: {
                   base: '/JL_WebTools/',
-                  routeNameSplitter: '/'
+                  routeNameSplitter: '/',
+                  linkActiveClass: 'active',
+                  linkExactActiveClass: 'active'
               }
           }
         : {
               router: {
-                  routeNameSplitter: '/'
+                  routeNameSplitter: '/',
+                  linkActiveClass: 'active',
+                  linkExactActiveClass: 'active'
               }
           };
 
@@ -46,7 +50,7 @@ export default {
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: [],
+    plugins: ['~/plugins/vue-fontawesome.js'],
 
     /*
      ** Nuxt.js dev-modules
