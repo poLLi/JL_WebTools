@@ -3,12 +3,16 @@ const routerBase =
         ? {
               router: {
                   base: '/JL_WebTools/',
-                  routeNameSplitter: '/'
+                  routeNameSplitter: '/',
+                  linkActiveClass: 'active',
+                  linkExactActiveClass: 'active'
               }
           }
         : {
               router: {
-                  routeNameSplitter: '/'
+                  routeNameSplitter: '/',
+                  linkActiveClass: 'active',
+                  linkExactActiveClass: 'active'
               }
           };
 
