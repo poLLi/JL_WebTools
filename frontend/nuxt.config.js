@@ -50,7 +50,7 @@ export default {
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: ['~/plugins/vue-fontawesome.js'],
+    plugins: ['~/plugins/vue-fontawesome.js', '~/plugins/vue-swal.js', '~/plugins/vue-clipboard.js'],
 
     /*
      ** Nuxt.js dev-modules
