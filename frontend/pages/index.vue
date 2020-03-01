@@ -30,9 +30,9 @@
                         <h2 class="text-white mt-0">What are we doing?</h2>
                         <hr class="divider light my-4" />
                         <p class="text-white mb-4">
-                            The Just-Look Network Web Tools is a collection of all kinds of tool we created for our
-                            Community. Things like a Logo Generator to generate our Logo in a custom color to use it as
-                            an avatar or whatever^^
+                            Just-Look Network Web Tools is a collection of all kinds of tools we created for our
+                            Community. Things like a Logo Generator to get our Logo in a custom color to use it as an
+                            avatar or whatever^^
                         </p>
                     </b-col>
                 </b-row>
@@ -49,7 +49,7 @@
                         <div class="mt-5">
                             <i class="fas fa-4x fa-gem text-primary mb-4"></i>
                             <h3 class="h4 mb-2">Logo Generator</h3>
-                            <p class="text-muted mb-0">Lorem ipsum dolor sit amet, consetetur sadipscing elitr</p>
+                            <p class="text-muted mb-0">Customize our Logo for your needs</p>
                         </div>
                     </b-col>
                     <b-col lg="3" md="6" class="text-center">
