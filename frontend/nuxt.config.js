@@ -64,7 +64,13 @@ export default {
         // Doc: https://bootstrap-vue.js.org
         'bootstrap-vue/nuxt',
         // Doc: https://axios.nuxtjs.org/usage
-        '@nuxtjs/axios'
+        [
+            '@nuxtjs/axios',
+            {
+                //baseURL: 'https://api.just-look.net/web-tools/'
+                baseURL: 'http://127.0.0.1:1337'
+            }
+        ]
     ],
 
     /*
