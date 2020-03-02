@@ -5,7 +5,7 @@ module.exports = {
         linkExactActiveClass: 'active'
     },
 
-    mode: 'universal',
+    mode: 'spa',
 
     /*
      ** Headers of the page
@@ -53,7 +53,9 @@ module.exports = {
                 //baseURL: 'https://api.just-look.net/web-tools/'
                 baseURL: 'http://127.0.0.1:1337'
             }
-        ]
+        ],
+        // netlify-files
+        '@nuxtjs/netlify-files'
     ],
 
     /*
@@ -86,5 +88,7 @@ module.exports = {
     /*
      ** Generate configuration
      */
-    generate: {}
+    generate: {
+        fallback: true
+    }
 };
