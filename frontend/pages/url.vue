@@ -18,7 +18,7 @@
                                         type="url"
                                     ></b-form-input>
                                 </b-form-group>
-                                <b-button type="submit" variant="primary" @click="onSubmitBase">
+                                <b-button type="submit" variant="primary" @click="onSubmitBase(form.baseUrl)">
                                     short... short it now!
                                 </b-button>
                             </b-form>
@@ -115,12 +115,7 @@ export default {
         };
     },
 
-    computed: {
-        requiredFieldsFilled() {
-            // Check if right url format
-            return true;
-        }
-    },
+    computed: {},
 
     methods: {
         checkValidShorUrl(shortUrl, callback) {
@@ -139,8 +134,20 @@ export default {
                 });
         },
 
-        onSubmitBase() {
-            if (!this.requiredFieldsFilled) {
+        requiredFieldsChecked(input) {
+            // Check if right url format
+            var expression = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
+            var regex = new RegExp(expression);
+
+            if (input.match(regex)) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
+        onSubmitBase(input) {
+            if (!this.requiredFieldsChecked(input)) {
                 swal('Please Enter a valid Url', '', 'error');
                 return;
             }
@@ -148,7 +155,7 @@ export default {
                 const vm = this;
 
                 const obj = {
-                    baseUrl: this.form.baseUrl,
+                    baseUrl: input,
                     shortUrl: url
                 };
 
