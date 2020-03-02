@@ -2,18 +2,11 @@ const routerBase =
     process.env.DEPLOY_ENV === 'GH_PAGES'
         ? {
               router: {
-                  base: '/JL_WebTools/',
-                  routeNameSplitter: '/',
-                  linkActiveClass: 'active',
-                  linkExactActiveClass: 'active'
+                  base: '/JL_WebTools/'
               }
           }
         : {
-              router: {
-                  routeNameSplitter: '/',
-                  linkActiveClass: 'active',
-                  linkExactActiveClass: 'active'
-              }
+              router: {}
           };
 
 export default {
@@ -21,6 +14,12 @@ export default {
      ** Router Settings
      */
     ...routerBase,
+
+    router: {
+        routeNameSplitter: '/',
+        linkActiveClass: 'active',
+        linkExactActiveClass: 'active'
+    },
 
     mode: 'universal',
 

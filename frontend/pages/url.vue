@@ -59,7 +59,7 @@
             </b-container>
         </section>
 
-        <section v-if="checking" class="page-section bg-secondary">
+        <section v-if="checking" class="page-section bg-secondary" id="statistics">
             <b-container>
                 <b-row align-h="center">
                     <b-col lg="8" class="">
@@ -158,7 +158,8 @@ export default {
                         console.log('Url submitted');
                         swal('You did it!', '', 'success');
                         this.showNewUrl = true;
-                        this.newUrl = 'https://jln.net/' + res.shortUrl;
+                        //this.newUrl = 'https://jln.net/' + res.shortUrl;
+                        this.newUrl = 'localhost:3000/' + res.shortUrl;
                     })
                     .catch(err => {
                         if (error.response.status === 400) {
