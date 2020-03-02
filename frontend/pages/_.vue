@@ -28,7 +28,6 @@ export default {
             return;
         }
 
-        console.log(this.$route.params.pathMatch);
         const id = this.$route.params.pathMatch;
 
         this.$axios
