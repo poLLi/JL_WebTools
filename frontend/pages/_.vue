@@ -41,8 +41,22 @@ export default {
 
                     return;
                 } else {
-                    const url = res[0].baseUrl;
-                    window.location.href = url;
+                    // increse click counter
+                    var clicksNum = parseInt(res[0].clicks);
+                    const obj = {
+                        clicks: (clicksNum += 1)
+                    };
+
+                    this.$axios
+                        .$put('/urls/' + res[0].id, obj)
+                        .then(res => {
+                            // Redirect to new website
+                            const url = res.baseUrl;
+                            window.location.href = url;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 }
             })
             .catch(err => {
