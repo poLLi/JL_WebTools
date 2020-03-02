@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     router: {
         routeNameSplitter: '/',
         linkActiveClass: 'active',
