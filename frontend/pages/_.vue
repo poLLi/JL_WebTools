@@ -24,11 +24,11 @@ export default {
     layout: 'redirect',
 
     mounted() {
-        if (!this.$route.params.r) {
+        if (!this.$route.params.pathMatch) {
             return;
         }
 
-        const id = this.$route.params.r;
+        const id = this.$route.params.pathMatch;
 
         this.$axios
             .$get('/urls?shortUrl_eq=' + id)
