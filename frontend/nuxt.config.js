@@ -50,8 +50,8 @@ module.exports = {
         [
             '@nuxtjs/axios',
             {
-                //baseURL: 'https://api.just-look.net/web-tools/'
-                baseURL: 'http://127.0.0.1:1337'
+                baseURL: 'http://just-look.net:32768'
+                //baseURL: 'http://127.0.0.1:1337'
             }
         ]
     ],
