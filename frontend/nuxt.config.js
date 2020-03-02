@@ -1,20 +1,4 @@
-const routerBase =
-    process.env.DEPLOY_ENV === 'GH_PAGES'
-        ? {
-              router: {
-                  base: '/'
-              }
-          }
-        : {
-              router: {}
-          };
-
 export default {
-    /*
-     ** Router Settings
-     */
-    ...routerBase,
-
     router: {
         routeNameSplitter: '/',
         linkActiveClass: 'active',

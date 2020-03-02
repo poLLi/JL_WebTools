@@ -60,6 +60,10 @@ export default {
             })
             .catch(err => {
                 console.log(err);
+
+                swal('Something went wrong!', 'please contact a developer on our Discord', 'error').then(result => {
+                    this.$router.push('/');
+                });
             });
     }
 };
