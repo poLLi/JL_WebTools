@@ -2,6 +2,6 @@
 
 # JL_WebTools
 
-> Just-Look Network | Web Tools
+> Just-Look Network | Web Tools :)
 
 -   [Just-Look Network](https://just-look.net)
