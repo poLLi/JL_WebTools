@@ -2,18 +2,11 @@ const routerBase =
     process.env.DEPLOY_ENV === 'GH_PAGES'
         ? {
               router: {
-                  base: '/JL_WebTools/',
-                  routeNameSplitter: '/',
-                  linkActiveClass: 'active',
-                  linkExactActiveClass: 'active'
+                  base: '/'
               }
           }
         : {
-              router: {
-                  routeNameSplitter: '/',
-                  linkActiveClass: 'active',
-                  linkExactActiveClass: 'active'
-              }
+              router: {}
           };
 
 export default {
@@ -21,6 +14,12 @@ export default {
      ** Router Settings
      */
     ...routerBase,
+
+    router: {
+        routeNameSplitter: '/',
+        linkActiveClass: 'active',
+        linkExactActiveClass: 'active'
+    },
 
     mode: 'universal',
 
@@ -50,7 +49,7 @@ export default {
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: ['~/plugins/vue-fontawesome.js'],
+    plugins: ['~/plugins/vue-fontawesome.js', '~/plugins/vue-swal.js', '~/plugins/vue-clipboard.js'],
 
     /*
      ** Nuxt.js dev-modules
@@ -64,7 +63,13 @@ export default {
         // Doc: https://bootstrap-vue.js.org
         'bootstrap-vue/nuxt',
         // Doc: https://axios.nuxtjs.org/usage
-        '@nuxtjs/axios'
+        [
+            '@nuxtjs/axios',
+            {
+                //baseURL: 'https://api.just-look.net/web-tools/'
+                baseURL: 'http://127.0.0.1:1337'
+            }
+        ]
     ],
 
     /*
