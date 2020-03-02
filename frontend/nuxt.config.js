@@ -86,7 +86,5 @@ module.exports = {
     /*
      ** Generate configuration
      */
-    generate: {
-        fallback: true
-    }
+    generate: {}
 };
