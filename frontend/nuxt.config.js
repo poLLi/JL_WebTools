@@ -50,7 +50,7 @@ module.exports = {
         [
             '@nuxtjs/axios',
             {
-                baseURL: 'http://just-look.net:32768'
+                baseURL: 'https://api.just-look.net/'
                 //baseURL: 'http://127.0.0.1:1337'
             }
         ]
