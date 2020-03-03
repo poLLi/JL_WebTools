@@ -166,7 +166,7 @@ export default {
                         swal('You did it!', '', 'success');
                         this.showNewUrl = true;
                         //this.newUrl = 'https://jln.net/' + res.shortUrl;
-                        this.newUrl = 'https://polli.online/' + res.shortUrl;
+                        this.newUrl = 'https://tools.polli.online/' + res.shortUrl;
                     })
                     .catch(err => {
                         if (error.response.status === 400) {
