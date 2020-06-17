@@ -1,6 +1,8 @@
 import http from 'http';
 import socketIO from 'socket.io';
 
+var connectedCount = 0;
+
 export default function() {
     this.nuxt.hook('render:before', renderer => {
         const server = http.createServer(this.nuxt.renderer.app);
@@ -15,6 +17,14 @@ export default function() {
         // Add socket.io events
         const messages = [];
         io.on('connection', socket => {
+            connectedCount++;
+            console.log('Connected: %s sockets connected', io.engine.clientsCount);
+
+            socket.on('disconnect', () => {
+                connectedCount--;
+                console.log('Disconnected: %s sockets still connected', io.engine.clientsCount);
+            });
+
             socket.on('last-messages', function(fn) {
                 fn(messages.slice(-50));
             });

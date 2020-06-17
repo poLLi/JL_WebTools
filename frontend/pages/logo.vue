@@ -211,6 +211,9 @@ export default {
 
             img.src = url;
         }
+    },
+    head: {
+        title: 'JLN | Logo Generator'
     }
 };
 </script>

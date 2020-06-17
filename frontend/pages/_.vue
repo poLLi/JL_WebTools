@@ -65,6 +65,9 @@ export default {
                     this.$router.push('/');
                 });
             });
+    },
+    head: {
+        title: 'JLN | ...redirect'
     }
 };
 </script>

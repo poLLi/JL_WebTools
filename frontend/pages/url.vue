@@ -207,6 +207,9 @@ export default {
                     console.log(err);
                 });
         }
+    },
+    head: {
+        title: 'JLN | URL Shortener'
     }
 };
 </script>

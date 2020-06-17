@@ -5,7 +5,7 @@ module.exports = {
         linkExactActiveClass: 'active'
     },
 
-    mode: 'spa',
+    mode: 'universal',
 
     /*
      ** Headers of the page

@@ -9,6 +9,7 @@
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item to="/" exact>Home</b-nav-item>
+                    <b-nav-item to="/jl2g">JL2G</b-nav-item>
                     <b-nav-item to="/logo">Logo Generator</b-nav-item>
                     <b-nav-item to="/url">URL Shortener</b-nav-item>
                     <b-nav-item
