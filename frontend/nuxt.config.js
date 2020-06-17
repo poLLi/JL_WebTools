@@ -61,8 +61,12 @@ module.exports = {
                 baseURL: 'https://jln.just-look.net/'
                 //baseURL: 'http://127.0.0.1:1337'
             }
-        ]
+        ],
+        '~/io'
     ],
+    env: {
+        WS_URL: process.env.WS_URL || 'http://localhost:3000'
+    },
 
     /*
      ** BootstrapVue Settings
