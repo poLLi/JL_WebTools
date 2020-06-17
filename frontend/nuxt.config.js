@@ -62,10 +62,24 @@ module.exports = {
                 //baseURL: 'http://127.0.0.1:1337'
             }
         ],
-        '~/io'
+        'nuxt-socket-io'
     ],
-    env: {
-        WS_URL: process.env.WS_URL || 'http://localhost:3000'
+    io: {
+        sockets: [
+            // Required
+            {
+                // At least one entry is required
+                name: 'jl2g',
+                url: 'http://localhost:3000',
+                default: true,
+                vuex: {
+                    /* see section below */
+                },
+                namespaces: {
+                    /* see section below */
+                }
+            }
+        ]
     },
 
     /*

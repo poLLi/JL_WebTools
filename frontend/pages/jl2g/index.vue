@@ -68,46 +68,38 @@
 </template>
 
 <script>
-import socket from '~/plugins/socket.io.js';
-
 export default {
     transition: 'page',
-    asyncData(context, callback) {
-        socket.emit('last-messages', function(messages) {
-            callback(null, {
-                messages,
-                message: ''
-            });
-        });
+    data() {
+        return {
+            messages: [],
+            message: ''
+        };
     },
     watch: {
         messages: 'scrollToBottom'
     },
-    beforeMount() {
-        socket.on('new-message', message => {
-            this.messages.push(message);
-        });
-    },
     mounted() {
-        this.scrollToBottom();
+        this.socket = this.$nuxtSocket({
+            name: 'jl2g',
+
+            reconnection: false
+        });
     },
     methods: {
         sendMessage() {
             if (!this.message.trim()) {
                 return;
             }
+
             const message = {
                 date: new Date().toJSON(),
                 text: this.message.trim()
             };
+
             this.messages.push(message);
             this.message = '';
-            socket.emit('send-message', message);
-        },
-        scrollToBottom() {
-            this.$nextTick(() => {
-                this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
-            });
+            this.socket.emit('sendMessage', message);
         }
     },
     head: {

@@ -1,4 +1,24 @@
-import http from 'http';
+// Inside each ".js" file above, the module expects this at a bare-minimum
+// An example svc:
+export default function(socket, io) {
+    socket.on('disconnect', () => {
+        console.log('Disconnected: %s sockets still connected', io.engine.clientsCount);
+    });
+
+    return Object.freeze({
+        /* Just define the methods here */
+        sendMessage(msg) {
+            console.log(msg);
+            socket.broadcast.emit('new-message', msg);
+        },
+
+        disconnect() {
+            console.log('Disconnected: %s sockets still connected', io.engine.clientsCount);
+        }
+    });
+}
+
+/*import http from 'http';
 import socketIO from 'socket.io';
 
 var connectedCount = 0;
@@ -35,3 +55,4 @@ export default function() {
         });
     });
 }
+*/
