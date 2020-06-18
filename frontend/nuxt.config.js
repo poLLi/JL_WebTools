@@ -5,7 +5,7 @@ module.exports = {
         linkExactActiveClass: 'active'
     },
 
-    mode: 'universal',
+    mode: 'spa',
 
     /*
      ** Headers of the page
@@ -61,11 +61,10 @@ module.exports = {
                 baseURL: 'https://jln.just-look.net/'
                 //baseURL: 'http://127.0.0.1:1337'
             }
-        ],
-        '~/io'
+        ]
     ],
     env: {
-        WS_URL: process.env.WS_URL || 'http://localhost:3000'
+        WS_URL: process.env.WS_URL || 'http://localhost:3002'
     },
 
     /*
@@ -89,7 +88,8 @@ module.exports = {
         /*
          ** You can extend webpack config here
          */
-        extend(config, ctx) {},
+        vendor: ['socket.io-client'],
+        extend(config, ctx) { },
         extractCSS: {
             allChunks: true
         }
