@@ -12,6 +12,18 @@
     }
 }
 
+.party-section {
+    padding-top: 5rem;
+    padding-bottom: calc(10rem - #{$navbar-height});
+    min-height: 100vh;
+
+    @include media-breakpoint-up(lg) {
+        padding-top: calc(2rem + #{$navbar-height});
+        padding-bottom: 0;
+        height: 10vh;
+    }
+}
+
 .page-section {
     padding: 5rem 0;
 }

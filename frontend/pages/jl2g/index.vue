@@ -8,19 +8,11 @@
                         <hr class="divider light mt-4" />
                     </b-col>
                     <b-col lg="8" class="mt-5">
-                        <b-card class="shadow">
+                        <b-card class="shadow text-center p-4">
                             <b-form @submit.stop.prevent>
-                                <b-form-group label="Enter your Party Name" label-for="roomName">
-                                    <b-form-input
-                                        id="roomName"
-                                        placeholder="Cool Video Party Group"
-                                        type="url"
-                                        v-model="party.name"
-                                    ></b-form-input>
-                                </b-form-group>
                                 <b-button
                                     type="submit"
-                                    variant="primary"
+                                    variant="primary btn-xl "
                                     @click="createParty()"
                                 >Start your awesome Party now!</b-button>
                             </b-form>
@@ -51,30 +43,10 @@
         <section class="page-section bg-dark">
             <b-container>
                 <b-row align-h="center">
-                    <b-col lg="8">
-                        <h2 class="text-white mt-0">Socket.IO Test</h2>
-                        <hr />
-
-                        <ul class="pages">
-                            <li class="chat page">
-                                <div class="chatArea">
-                                    <ul ref="messages" class="messages">
-                                        <li
-                                            v-for="(message, index) in messages"
-                                            :key="index"
-                                            class="message"
-                                        >{{ message}}</li>
-                                    </ul>
-                                </div>
-                                <input
-                                    v-model="message"
-                                    class="inputMessage"
-                                    type="text"
-                                    placeholder="Type here..."
-                                    @keyup.enter="sendMessage"
-                                />
-                            </li>
-                        </ul>
+                    <b-col lg="8" class="text-center text-white">
+                        <h2 class="mt-0">What is Just-Look together?</h2>
+                        <hr class="divider light mt-4" />blalba
+                        <!-- blablab info here -->
                     </b-col>
                 </b-row>
             </b-container>
@@ -87,87 +59,45 @@ import io from 'socket.io-client';
 
 export default {
     transition: 'page',
+
     head: {
         title: 'JLN | Just-Look 2 Gether Party'
     },
+
     data() {
         return {
             socket: null,
-            message: '',
-            messages: [],
             party: {
-                id: '',
-                name: ''
+                id: ''
             }
         };
     },
-    watch: {
-        messages: 'scrollToBottom'
-    },
+
     mounted() {
         // Open Socket Connection
         this.socket = io(process.env.WS_URL);
 
-        this.socket.on('messageRecived', this.messageRecived);
-        this.socket.on('createdParty', this.createdParty);
-
-        this.scrollToBottom();
+        // Socket Events
+        this.socket.on('partyCreated', this.partyCreated);
     },
+
     destroyed() {
         // Close Socket Connection
         this.socket.close();
     },
+
     methods: {
-        messageRecived(msg) {
-            console.log(msg);
-            this.messages.push(msg);
-        },
-
         createParty() {
-            this.socket.emit('createParty', this.party.name);
+            this.socket.emit('createParty');
         },
 
-        createdParty(id) {
-            this.party.id = id;
-            console.log(this.party.id);
+        partyCreated(id) {
+            this.$router.push('/jl2g/' + id);
         },
 
         joinParty() {
-            this.socket.emit('joinParty', this.party.id);
-        },
-
-        sendMessage() {
-            this.socket.emit('sendMessage', this.party.id, this.message);
-            this.message = '';
-        },
-
-        scrollToBottom() {
-            this.$nextTick(() => {
-                this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
-            });
+            this.$router.push('/jl2g/' + this.party.id);
         }
     }
 };
 </script>
-
-<style>
-.chatArea {
-    height: 500px;
-}
-.messages {
-    height: 100%;
-    margin: 0;
-    overflow-y: scroll;
-    padding: 10px 20px 10px 20px;
-    list-style: none;
-    word-wrap: break-word;
-}
-/* Input */
-.inputMessage {
-    border: 10px solid #000;
-    height: 60px;
-    outline: none;
-    right: 0;
-    width: 100%;
-}
-</style>
