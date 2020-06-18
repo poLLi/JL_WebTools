@@ -38,7 +38,7 @@
 
         <section class="page-section bg-primary">
             <b-container>
-                <b-row align-h="center text-center text-white">
+                <b-row align-h="center" class="text-center text-white">
                     <b-col lg="8">
                         <h2 class="mt-0">Socket.IO Test</h2>
                         <hr class="divider light mt-4" />asdasd
