@@ -42,7 +42,7 @@ module.exports = {
     /*
      ** Plugins to load before mounting the App
      */
-    plugins: ['~/plugins/vue-fontawesome.js', '~/plugins/vue-swal.js', '~/plugins/vue-clipboard.js'],
+    plugins: ['~/plugins/vue-fontawesome.js', '~/plugins/vue-swal.js', '~/plugins/vue-clipboard.js', '~/plugins/vue-youtube.js'],
 
     /*
      ** Nuxt.js dev-modules

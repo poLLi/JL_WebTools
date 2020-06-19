@@ -1,19 +1,30 @@
 <template>
     <div>
         <section class="party-section bg-dark">
-            <b-container fluid>
-                <b-row>
-                    <b-col lg="9" class="mt-1">
-                        <b-card class="shadow">
-                            <div class="videoBox">VIDEO</div>
+            <b-container class="h-100" fluid>
+                <b-row class="h-100">
+                    <b-col lg="9" class="mt-1 mb-4">
+                        <b-card class="shadow h-100">
+                            <youtube
+                                class="videoBox"
+                                video-id="E8ePa1X7-YQ"
+                                player-width="100%"
+                                player-height="100%"
+                                :player-vars="{autoplay: 1}"
+                                @ready="ready"
+                                @playing="playing"
+                            ></youtube>
+                            <b-button @click="pause">pause</b-button>
+                            <b-button @click="play">play</b-button>
                         </b-card>
                     </b-col>
 
-                    <b-col lg="3" class="mt-1">
-                        <b-card class="shadow">
-                            <span>User Connected: {{ party.user.length }}</span>
-                            <hr />
-                            <div class="chatBox">
+                    <b-col lg="3" class="mb-4 mt-1 d-none d-lg-block d-xl-block">
+                        <b-card class="shadow h-100">
+                            <div class="chatbox">
+                                <span>User Connected: {{ party.user }}</span>
+                                <hr />
+
                                 <ul ref="messages" class="messages">
                                     <li
                                         v-for="(message, index) in messages"
@@ -63,10 +74,13 @@ export default {
         return {
             message: '',
             messages: [],
+            timeInterval: null,
             party: {
-                id: '',
-                name: '',
-                user: []
+                currVideo: '',
+                currPlayer: '',
+                time: '',
+                user: '',
+                id: ''
             }
         };
     },
@@ -76,7 +90,8 @@ export default {
     },
 
     computed: mapGetters({
-        socket: 'jl2g/get'
+        socket: 'jl2g/getSocket',
+        username: 'jl2g/getUsername'
     }),
 
     mounted() {
@@ -89,32 +104,45 @@ export default {
             if (vm.socket != null) {
                 vm.socket.on('messageRecived', vm.messageRecived);
                 vm.socket.on('partyDontExists', vm.partyDontExists);
-                vm.socket.emit('joinParty', vm.party.id);
+                vm.socket.on('userCount', vm.partyUserCount);
+                vm.socket.on('syncPartyData', vm.syncPartyData);
+                vm.socket.emit('joinParty', vm.party.id, vm.username);
 
                 clearInterval(interval);
             }
         }, 100);
 
         // Chat automatic scroll to bottom
-        this.scrollToBottom();
+        //this.scrollToBottom();
     },
 
     methods: {
+        // -------------------------------------------------------
+        // Party dont Exsists
         partyDontExists() {
             swal('Please Enter a valid Party ID', '', 'error').then(result => {
                 this.$router.push('/jl2g');
             });
-
             return;
         },
 
+        // -------------------------------------------------------
+        // Synce Party Data
+        syncPartyData(currVideo, currPlayer, time) {
+            this.party.currVideo = currVideo;
+            this.party.currPlayer = currPlayer;
+            this.party.time = time;
+        },
+
+        partyUserCount(count) {
+            this.party.user = count;
+        },
+
+        // -------------------------------------------------------
+        // Party Chat
         messageRecived(msg) {
             console.log(msg);
             this.messages.push(msg);
-        },
-
-        joinParty() {
-            this.socket.emit('joinParty', this.party.id);
         },
 
         sendMessage() {
@@ -126,31 +154,76 @@ export default {
             this.$nextTick(() => {
                 this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
             });
+        },
+
+        // -------------------------------------------------------
+        // Party Video Functions
+        ready(event) {
+            this.player = event.target;
+            console.log('ready');
+
+            let vm = this;
+            this.timeInterval = setInterval(() => {
+                vm.socket.emit('syncCurrentTime', vm.party.id, vm.player.getCurrentTime());
+            }, 500);
+
+            this.player.seekTo(this.party.time);
+            setTimeout(() => {
+                this.play();
+            }, 500);
+        },
+
+        ended() {
+            clearInterval(this.timeInterval);
+        },
+
+        playing(event) {
+            // The player is playing a video.
+            console.log('playing');
+            console.log(event);
+        },
+        play() {
+            // The player is playing a video.
+            this.player.playVideo();
+            console.log(this.player.getCurrentTime());
+            console.log('play');
+        },
+        change() {
+            // when you change the value, the player will also change.
+            // If you would like to change `playerVars`, please change it before you change `videoId`.
+            // If `playerVars.autoplay` is 1, `loadVideoById` will be called.
+            // If `playerVars.autoplay` is 0, `cueVideoById` will be called.
+            this.videoId = 'another video id';
+        },
+        stop() {
+            this.player.stopVideo();
+            console.log('stop');
+            console.log(this.player);
+        },
+        pause() {
+            this.player.pauseVideo();
+            console.log('pause');
+            console.log(this.player);
         }
     }
 };
 </script>
 
-<style>
-.chatBox {
-    position: relative;
-    min-height: calc(100vh - 250px);
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+<style lang="scss" scoped>
+.videoBox {
+    height: 90% !important;
 }
 
-.videoBox {
-    background-color: red;
+.chatbox {
+    height: 100%;
     position: relative;
-    min-height: calc(100vh - 200px);
-    width: 100%;
 }
 
 .messages {
     position: absolute;
+    top: 45px;
+    bottom: 40px;
     width: 100%;
-    top: 0;
-    bottom: 70px;
     margin: 0;
     overflow-y: scroll;
     padding: 10px 20px 10px 20px;
@@ -160,12 +233,11 @@ export default {
 
 .inputMessage {
     position: absolute;
-    height: 60px;
-    outline: none;
     bottom: 0;
+    height: 40px;
+    outline: none;
     width: 100%;
     border: none;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 10px;
 }
 </style>

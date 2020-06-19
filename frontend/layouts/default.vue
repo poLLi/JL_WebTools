@@ -18,7 +18,7 @@ export default {
     },
 
     computed: mapGetters({
-        socket: 'jl2g/get'
+        socket: 'jl2g/getSocket'
     }),
 
     watch: {
@@ -26,7 +26,8 @@ export default {
             if (!this.$route.name.includes('jl2g')) {
                 if (this.socket != null) {
                     this.socket.close();
-                    this.$store.commit('jl2g/set', null);
+                    this.$store.commit('jl2g/setSocket', null);
+                    this.$store.commit('jl2g/setUsername', null);
                     console.log('socket closed');
                 }
             }

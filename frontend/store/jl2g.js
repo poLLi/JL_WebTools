@@ -1,15 +1,23 @@
 export const state = () => ({
-    socket: null
+    socket: null,
+    username: null
 });
 
 export const mutations = {
-    set(state, socket) {
+    setSocket(state, socket) {
         state.socket = socket;
+    },
+    setUsername(state, username) {
+        state.username = username;
     }
 }
 
 export const getters = {
-    get(state) {
+    getSocket(state) {
         return state.socket;
+    },
+
+    getUsername(state) {
+        return state.username;
     }
 }

@@ -10,9 +10,15 @@
                     <b-col lg="8" class="mt-5">
                         <b-card class="shadow text-center p-4">
                             <b-form @submit.stop.prevent>
+                                <b-form-input
+                                    id="userName"
+                                    placeholder="Username (Optional)"
+                                    v-model="party.username"
+                                ></b-form-input>
+                                <br />
                                 <b-button
                                     type="submit"
-                                    variant="primary btn-xl "
+                                    variant="primary btn-xl btn-block"
                                     @click="createParty()"
                                 >Start your awesome Party now!</b-button>
                             </b-form>
@@ -21,7 +27,16 @@
                     <b-col lg="4" class="mt-5">
                         <b-card class="shadow">
                             <b-form @submit.stop.prevent>
-                                <b-form-group label="Enter Party ID" label-for="roomID">
+                                <b-form-group
+                                    label="Enter Party ID and Username(Optional)"
+                                    label-for="userName"
+                                >
+                                    <b-form-input
+                                        id="userName"
+                                        placeholder="Username (Optional)"
+                                        v-model="party.username"
+                                    ></b-form-input>
+                                    <br />
                                     <b-form-input
                                         id="roomID"
                                         placeholder="Party ID"
@@ -65,14 +80,15 @@ export default {
     },
 
     computed: mapGetters({
-        socket: 'jl2g/get'
+        socket: 'jl2g/getSocket'
     }),
 
     data() {
         return {
             inParty: false,
             party: {
-                id: ''
+                id: '',
+                username: ''
             }
         };
     },
@@ -92,14 +108,15 @@ export default {
     methods: {
         createParty() {
             this.socket.emit('createParty');
-            console.log(this.socket);
         },
 
         partyCreated(id) {
+            this.$store.commit('jl2g/setUsername', this.party.username);
             this.$router.push('/jl2g/' + id);
         },
 
         joinParty() {
+            this.$store.commit('jl2g/setUsername', this.party.username);
             this.$router.push('/jl2g/' + this.party.id);
         }
     }
