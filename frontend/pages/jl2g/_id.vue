@@ -235,12 +235,28 @@ export default {
     width: 100%;
     margin: 0;
     overflow-y: scroll;
-    padding: 0px 0px 5px 0px;
+    padding: 0px 5px 5px 0px;
     list-style: none;
     word-wrap: break-word;
+    visibility: hidden;
+
+    &:hover {
+        visibility: visible;
+    }
 
     &::-webkit-scrollbar {
-        width: 0px;
+        width: 3px;
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: #555;
     }
 }
 
@@ -248,6 +264,7 @@ export default {
     background: rgba(0, 0, 0, 0.2);
     padding: 5px;
     margin-bottom: 6px;
+    visibility: visible;
 
     .chatUser {
         padding: 0;
@@ -262,13 +279,9 @@ export default {
     }
 
     .chatMsg {
-        padding: 5px;
+        border-left: 4px solid #a1a1a1;
+        padding: 8px;
         margin: 0;
-
-        &::before {
-            content: '> ';
-            font-weight: 800;
-        }
     }
 }
 
