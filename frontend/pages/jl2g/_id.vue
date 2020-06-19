@@ -30,7 +30,10 @@
                                         v-for="(message, index) in messages"
                                         :key="index"
                                         class="message"
-                                    >{{ message}}</li>
+                                    >
+                                        <span class="chatUser">{{ message.username}}</span>
+                                        <p class="chatMsg">{{ message.msg}}</p>
+                                    </li>
                                 </ul>
 
                                 <input
@@ -151,9 +154,9 @@ export default {
             this.message = '';
         },
 
-        messageRecived(msg) {
-            console.log(msg);
-            this.messages.push(msg);
+        messageRecived(username, msg) {
+            console.log(username + ': ' + msg);
+            this.messages.push({ username, msg });
         },
 
         scrollToBottom() {
@@ -232,9 +235,41 @@ export default {
     width: 100%;
     margin: 0;
     overflow-y: scroll;
-    padding: 10px 20px 10px 20px;
+    padding: 0px 0px 5px 0px;
     list-style: none;
     word-wrap: break-word;
+
+    &::-webkit-scrollbar {
+        width: 0px;
+    }
+}
+
+.message {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    margin-bottom: 6px;
+
+    .chatUser {
+        padding: 0;
+        margin: 0;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #ff6600;
+
+        &::after {
+            content: ':';
+        }
+    }
+
+    .chatMsg {
+        padding: 5px;
+        margin: 0;
+
+        &::before {
+            content: '> ';
+            font-weight: 800;
+        }
+    }
 }
 
 .inputMessage {

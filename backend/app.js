@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
     // -------------------------------------------------------
     // Party Chat
     socket.on('sendMessage', (id, message) => {
-        io.in(id).emit('messageRecived', socket.username + ': ' + message);
+        io.in(id).emit('messageRecived', socket.username, message);
     });
 });
 
