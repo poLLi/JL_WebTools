@@ -39,7 +39,7 @@ io.on('connection', (socket) => {
         io.sockets.adapter.rooms[id].id = id;
         io.sockets.adapter.rooms[id].currVideo = 'Dqb2KY6F4iw';
         io.sockets.adapter.rooms[id].currPlayer = 'yt';
-        io.sockets.adapter.rooms[id].time = '0';
+        io.sockets.adapter.rooms[id].currTime = '0';
 
         // add room to global array
         console.log(io.sockets.adapter.rooms[id].id);
@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
             io.in(id).emit('syncPartyData',
                 io.sockets.adapter.rooms[id].currVideo,
                 io.sockets.adapter.rooms[id].currPlayer,
-                io.sockets.adapter.rooms[id].time
+                io.sockets.adapter.rooms[id].currTime
             );
 
             // emit to user counter
@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
 
     socket.on('syncCurrentTime', (id, currTime) => {
         if (io.sockets.adapter.rooms[id] !== undefined) {
-            io.sockets.adapter.rooms[id].time = currTime;
+            io.sockets.adapter.rooms[id].currTime = currTime;
         }
     })
 

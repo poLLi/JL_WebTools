@@ -78,7 +78,7 @@ export default {
             party: {
                 currVideo: '',
                 currPlayer: '',
-                time: '',
+                currTime: '',
                 user: '',
                 id: ''
             }
@@ -98,15 +98,21 @@ export default {
         this.party.id = this.$route.params.id;
         // TODO: Check if room exsits - if not - push to /jl2g for creation (error swal)
 
+        // -------------------------------------------------------
         // Socket Events
         let vm = this;
         let interval = setInterval(() => {
             if (vm.socket != null) {
+                // Party Chat
                 vm.socket.on('messageRecived', vm.messageRecived);
-                vm.socket.on('partyDontExists', vm.partyDontExists);
-                vm.socket.on('userCount', vm.partyUserCount);
+
+                // Sync Data
                 vm.socket.on('syncPartyData', vm.syncPartyData);
+                vm.socket.on('userCount', vm.partyUserCount);
+
+                // initial Party join check
                 vm.socket.emit('joinParty', vm.party.id, vm.username);
+                vm.socket.on('partyDontExists', vm.partyDontExists);
 
                 clearInterval(interval);
             }
@@ -128,10 +134,10 @@ export default {
 
         // -------------------------------------------------------
         // Synce Party Data
-        syncPartyData(currVideo, currPlayer, time) {
+        syncPartyData(currVideo, currPlayer, currTime) {
             this.party.currVideo = currVideo;
             this.party.currPlayer = currPlayer;
-            this.party.time = time;
+            this.party.currTime = currTime;
         },
 
         partyUserCount(count) {
@@ -140,14 +146,14 @@ export default {
 
         // -------------------------------------------------------
         // Party Chat
-        messageRecived(msg) {
-            console.log(msg);
-            this.messages.push(msg);
-        },
-
         sendMessage() {
             this.socket.emit('sendMessage', this.party.id, this.message);
             this.message = '';
+        },
+
+        messageRecived(msg) {
+            console.log(msg);
+            this.messages.push(msg);
         },
 
         scrollToBottom() {
@@ -167,7 +173,7 @@ export default {
                 vm.socket.emit('syncCurrentTime', vm.party.id, vm.player.getCurrentTime());
             }, 500);
 
-            this.player.seekTo(this.party.time);
+            this.player.seekTo(this.party.currTime);
             setTimeout(() => {
                 this.play();
             }, 500);
