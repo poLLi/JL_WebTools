@@ -5,18 +5,14 @@
             <b-container class="h-100">
                 <b-row align-h="center" align-content="center" class="h-100 text-center">
                     <b-col lg="10" class="align-self-end">
-                        <h1 class="text-uppercase text-white font-weight-bold">
-                            Just-Look Network
-                        </h1>
-                        <h2 class="text-uppercase text-white font-weight-medium">
-                            Web Tools
-                        </h2>
+                        <h1 class="text-uppercase text-white font-weight-bold">Just-Look Network</h1>
+                        <h2 class="text-uppercase text-white font-weight-medium">Web Tools</h2>
                         <hr class="divider my-4" />
                     </b-col>
                     <b-col lg="8" class="align-self-baseline">
-                        <p class="text-white font-weight-light mb-5">
-                            Custom handmade Tools for Just-Look Network
-                        </p>
+                        <p
+                            class="text-white font-weight-light mb-5"
+                        >Custom handmade Tools for Just-Look Network</p>
                     </b-col>
                 </b-row>
             </b-container>
@@ -127,9 +123,10 @@
                             You have an idea for a new Tool we should make? contact us on Discord or more simply fill
                             out an Issue form for Feature request on Github.
                         </p>
-                        <a class="btn btn-light btn-xl" href="https://github.com/Just-Look-Network/JL_WebTools/issues">
-                            Github Issue´s
-                        </a>
+                        <a
+                            class="btn btn-light btn-xl"
+                            href="https://github.com/Just-Look-Network/JL_WebTools/issues"
+                        >Github Issue´s</a>
                     </b-col>
                 </b-row>
             </b-container>

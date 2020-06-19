@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import io from 'socket.io-client';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     transition: 'page',
@@ -61,11 +61,10 @@ export default {
 
     data() {
         return {
-            socket: null,
             message: '',
             messages: [],
             party: {
-                id: this.$route.params.party,
+                id: '',
                 name: '',
                 user: []
             }
@@ -76,25 +75,39 @@ export default {
         messages: 'scrollToBottom'
     },
 
+    computed: mapGetters({
+        socket: 'jl2g/get'
+    }),
+
     mounted() {
-        // Open Socket Connection & Room Join
+        this.party.id = this.$route.params.id;
         // TODO: Check if room exsits - if not - push to /jl2g for creation (error swal)
-        this.socket = io(process.env.WS_URL);
-        this.socket.emit('joinParty', this.$route.params.party);
 
         // Socket Events
-        this.socket.on('messageRecived', this.messageRecived);
+        let vm = this;
+        let interval = setInterval(() => {
+            if (vm.socket != null) {
+                vm.socket.on('messageRecived', vm.messageRecived);
+                vm.socket.on('partyDontExists', vm.partyDontExists);
+                vm.socket.emit('joinParty', vm.party.id);
+
+                clearInterval(interval);
+            }
+        }, 100);
 
         // Chat automatic scroll to bottom
         this.scrollToBottom();
     },
 
-    destroyed() {
-        // Close Socket Connection
-        this.socket.close();
-    },
-
     methods: {
+        partyDontExists() {
+            swal('Please Enter a valid Party ID', '', 'error').then(result => {
+                this.$router.push('/jl2g');
+            });
+
+            return;
+        },
+
         messageRecived(msg) {
             console.log(msg);
             this.messages.push(msg);

@@ -2,13 +2,11 @@
   "name": "jl_webtool_backend",
   "version": "0.0.1",
   "description": "Just-Look Network | WebTool Backend",
-  "main": "index.js",
+  "private": true,
+  "author": "PoLLi",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development nodemon app.js --watch app.js"
   },
-  "author": "PoLLi",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^2.3.0",

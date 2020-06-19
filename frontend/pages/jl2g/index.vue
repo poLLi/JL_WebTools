@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import io from 'socket.io-client';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     transition: 'page',
@@ -64,9 +64,13 @@ export default {
         title: 'JLN | Just-Look 2 Gether Party'
     },
 
+    computed: mapGetters({
+        socket: 'jl2g/get'
+    }),
+
     data() {
         return {
-            socket: null,
+            inParty: false,
             party: {
                 id: ''
             }
@@ -74,21 +78,21 @@ export default {
     },
 
     mounted() {
-        // Open Socket Connection
-        this.socket = io(process.env.WS_URL);
-
         // Socket Events
-        this.socket.on('partyCreated', this.partyCreated);
-    },
+        let vm = this;
+        let interval = setInterval(() => {
+            if (vm.socket != null) {
+                vm.socket.on('partyCreated', vm.partyCreated);
 
-    destroyed() {
-        // Close Socket Connection
-        this.socket.close();
+                clearInterval(interval);
+            }
+        }, 100);
     },
 
     methods: {
         createParty() {
             this.socket.emit('createParty');
+            console.log(this.socket);
         },
 
         partyCreated(id) {

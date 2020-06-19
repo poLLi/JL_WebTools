@@ -22,19 +22,42 @@ io.on('connection', (socket) => {
     socket.on('createParty', () => {
         let id = uniqid();
 
+        /*
+    io.sockets.adapter.rooms[id].currVideo = 'Dqb2KY6F4iw';
+    io.sockets.adapter.rooms[id].currPlayer = '';
+    io.sockets.adapter.rooms[id].lenght = '';
+    io.sockets.adapter.rooms[id].time = '';
+
+
+    console.log('Party created: ' + id);
+*/
+
         socket.emit('partyCreated', id);
         console.log('Party created: ' + id);
     });
 
     socket.on('joinParty', id => {
-        socket.join(id);
+
+        // Check if room exists
+        /*if (io.sockets.adapter.rooms[id] === undefined) {
+            console.log('Party dont Exsits');
+            return socket.emit('partyDontExists');
+
+        } else {*/
         console.log('Party joined: ' + id);
+        socket.join(id);
+        socket.username = 'test - ' + socket.id;
+
+        // TODO: Sync all room data
+        //}
+
+
     });
 
     // -------------------------------------------------------
     // Party Chat
     socket.on('sendMessage', (id, message) => {
-        io.in(id).emit('messageRecived', message);
+        io.in(id).emit('messageRecived', socket.username + ': ' + message);
     });
 });
 
