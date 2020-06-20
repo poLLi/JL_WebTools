@@ -106,9 +106,12 @@ io.on('connection', (socket) => {
     // -------------------------------------------------------
     // Party Sync
 
-    socket.on('syncCurrentTime', (id, currTime) => {
+    socket.on('syncCurrVideoTime', (id, currVideoTime) => {
         if (io.sockets.adapter.rooms[id] !== undefined) {
-            io.sockets.adapter.rooms[id].currTime = currTime;
+            console.log('---------- SYNC TIME START -----------');
+            io.sockets.adapter.rooms[id].currVideo.currTime = currVideoTime;
+            console.log(io.sockets.adapter.rooms[id].currVideo.currTime);
+            console.log('----------- SYNC TIME END ------------');
         }
     })
 

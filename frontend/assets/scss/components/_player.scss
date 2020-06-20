@@ -59,41 +59,42 @@
         background: #bbb;
         position: relative;
 
-        .videoLengthSlider {
+        input[type="range"] {
             width: 100%;
             height: 6px;
-            background: #bbb;
+
+            background: transparent !important;
             outline: none;
-            transition: background 450ms ease-in;
+            border: 0;
             cursor: pointer;
-            top: 0;
+
             position: absolute;
+            top: 0;
+
             -webkit-appearance: none;
+
+            &:hover {
+                &::-webkit-slider-thumb {
+                    background: #1D1D1D !important;
+                }
+                &::-moz-range-thumb {
+                    background: #1D1D1D !important;
+                }
+            }
 
             &::-webkit-slider-thumb {
                 -webkit-appearance: none;
                 appearance: none;
                 width: 12px;
-                height: 6px;
-                background: #1D1D1D;
-                -webkit-transition: .2s;
-                transition: height .2s;
-
-                &:hover {
-                    height: 16px;
-                }
+                height: 12px;
+                background: transparent !important;
             }
 
             &::-moz-range-thumb {
                 width: 12px;
-                height: 6px;
-                background: #1D1D1D;
-
-                &:hover {
-                    height: 16px;
-                }
+                height: 12px;
+                background: transparent !important;
             }
-
         }
     }
 

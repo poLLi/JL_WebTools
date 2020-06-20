@@ -14,15 +14,23 @@
                                 :player-vars="{autoplay: 0, controls: 0, disablekb: 1}"
                                 @ready="ready"
                                 @playing="playing"
+                                @ended="ended"
                             ></youtube>
                             <div class="playerControls">
                                 <div class="videoLength">
+                                    <b-progress
+                                        height="6px"
+                                        :value="playerControls.currTime"
+                                        :max="party.currVideo.length"
+                                    ></b-progress>
                                     <input
                                         id="videoLengthRange"
                                         class="videoLengthSlider"
                                         type="range"
+                                        step="0.01"
                                         :max="party.currVideo.length"
-                                        :value="party.currVideo.currTime"
+                                        value="0.00"
+                                        @click="onRangeUpdate"
                                     />
                                 </div>
                                 <button class="video-btn b-right playButton" @click="play">
@@ -141,6 +149,12 @@ export default {
                         }
                     ]
                 }
+            },
+
+            playerControls: {
+                currTime: '0',
+                lenght: '0',
+                volumen: '10'
             }
         };
     },
@@ -161,7 +175,7 @@ export default {
         // Socket Events
         let vm = this;
         let interval = setInterval(() => {
-            if (vm.socket != null) {
+            if (vm.socket != null && vm.player != null) {
                 // initial Party join check
                 vm.socket.emit('joinParty', vm.party.id, vm.username);
                 vm.socket.on('partyDontExists', vm.partyDontExists);
@@ -177,18 +191,23 @@ export default {
             }
         }, 100);
 
-        // Video Curr Time Bar color stuff :D
-        document.getElementById('videoLengthRange').oninput = function() {
-            this.style.background =
-                'linear-gradient(to right, #FF6600 0%, #FF6600 ' +
-                this.value +
-                '%, #bbb ' +
-                this.value +
-                '%, #bbb 100%)';
-        };
-
         // Chat automatic scroll to bottom
         this.scrollToBottom();
+
+        var slider = document.getElementById('videoLengthRange');
+
+        var sliderOffsetX = slider.getBoundingClientRect().left - document.documentElement.getBoundingClientRect().left;
+        var sliderOffsetY = slider.getBoundingClientRect().top - document.documentElement.getBoundingClientRect().top;
+
+        var sliderWidth = slider.offsetWidth;
+
+        slider.addEventListener('mousemove', function(event) {
+            var currentMouseXPos = event.clientX + window.pageXOffset - sliderOffsetX;
+            var sliderValAtPos = ((currentMouseXPos / sliderWidth) * slider.max).toFixed(2);
+
+            slider.value = sliderValAtPos;
+            slider.setAttribute('style', 'display: block;');
+        });
     },
 
     methods: {
@@ -239,33 +258,66 @@ export default {
             this.player = event.target;
             console.log('ready');
 
-            let vm = this;
-            this.timeInterval = setInterval(() => {
-                vm.socket.emit('syncCurrentTime', vm.party.id, vm.player.getCurrentTime());
-            }, 500);
-
-            this.player.seekTo(this.party.currTime);
+            // Autoplay at synced currTime
+            this.player.seekTo(this.party.currVideo.currTime);
             setTimeout(() => {
                 this.play();
             }, 500);
+
+            // start sync Time
+            this.syncCurrTime();
+        },
+
+        // Sync time to socket server (only if host)
+        syncCurrTime() {
+            let vm = this;
+            this.timeInterval = setInterval(() => {
+                if (vm.socket.id === vm.party.host) {
+                    vm.socket.emit('syncCurrVideoTime', vm.party.id, vm.player.getCurrentTime());
+                }
+            }, 1000);
+        },
+
+        // Stop Sync time to socket server
+        stopSyncCurrTime() {
+            clearInterval(this.timeInterval);
+        },
+
+        // -------------------------------------------------------
+        // Video Player Control Functions
+        startTimeRangeInterval() {
+            let vm = this;
+
+            let timeRangeInterval = setInterval(() => {
+                vm.playerControls.currTime = vm.player.getCurrentTime();
+            }, 100);
+        },
+
+        stopTimeRangeInterval() {
+            clearInterval(this.timeRangeInterval);
+        },
+
+        onRangeUpdate(event) {
+            console.log(event.target.value);
         },
 
         // -------------------------------------------------------
         // DEV SHIT---- TODO: NEEEEEEEED CLEANUP AND SHIT
 
         ended() {
-            clearInterval(this.timeInterval);
+            this.stopSyncCurrTime();
+            this.stopTimeRangeInterval();
         },
 
         playing(event) {
             // The player is playing a video.
             console.log('playing');
-            console.log(event);
         },
         play() {
             // The player is playing a video.
             this.player.playVideo();
-            console.log(this.player.getCurrentTime());
+            this.startTimeRangeInterval();
+
             console.log('play');
         },
         change() {
@@ -277,13 +329,17 @@ export default {
         },
         stop() {
             this.player.stopVideo();
+            this.stopSyncCurrTime();
+            this.stopTimeRangeInterval();
+
             console.log('stop');
-            console.log(this.player);
         },
         pause() {
             this.player.pauseVideo();
+            this.stopSyncCurrTime();
+            this.stopTimeRangeInterval();
+
             console.log('pause');
-            console.log(this.player);
         }
     }
 };
