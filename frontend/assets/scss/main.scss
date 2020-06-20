@@ -5,7 +5,12 @@
 @import 'bootstrap/scss/bootstrap.scss';
 @import 'bootstrap-vue/src/index.scss';
 
-// Import custom styles
-@import './custom.scss';
+// Import theme styles
 @import './navbar.scss';
 @import './header.scss';
+
+// Import component styles
+@import './components/player.scss';
+
+// Import custom styles
+@import './custom.scss';

@@ -1,0 +1,115 @@
+.playerControls {
+    height: 40px;
+    background-color: #333;
+
+    .video-btn {
+        height: 34px;
+        width: 40px;
+        float: left;
+
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        user-select: none;
+        border: none;
+
+        color: #fff;
+        background-color: #333;
+
+        &:hover {
+            text-decoration: none;
+            border: none;
+            color: #ccc;
+        }
+
+        &:focus,
+        &.focus {
+            outline: 0;
+        }
+
+        &:active,
+        &.active {
+            outline: 0;
+        }
+
+        &.b-left {
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        &.b-right {
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+    }
+
+    .infoControl {
+        height: 34px;
+        width: calc(100% - 320px);
+        float: left;
+        line-height: 30px;
+
+        .time {
+            padding-left: 10px;
+            color: #ccc;
+            font-size: 0.7em;
+        }
+    }
+
+    .videoLength {
+        height: 6px;
+        background: #bbb;
+        position: relative;
+
+        .videoLengthSlider {
+            width: 100%;
+            height: 6px;
+            background: #bbb;
+            outline: none;
+            transition: background 450ms ease-in;
+            cursor: pointer;
+            top: 0;
+            position: absolute;
+            -webkit-appearance: none;
+
+            &::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 12px;
+                height: 6px;
+                background: #1D1D1D;
+                -webkit-transition: .2s;
+                transition: height .2s;
+
+                &:hover {
+                    height: 16px;
+                }
+            }
+
+            &::-moz-range-thumb {
+                width: 12px;
+                height: 6px;
+                background: #1D1D1D;
+
+                &:hover {
+                    height: 16px;
+                }
+            }
+
+        }
+    }
+
+    .volumenControl {
+        width: 200px;
+        height: 34px;
+        float: left;
+        position: relative;
+
+        .volumenSilder {
+            position: absolute;
+            width: 160px;
+            float: left;
+            padding: 5px;
+            top: 0; bottom: 0; left: 40px; right: 0;
+            margin: auto;
+        }
+    }
+}

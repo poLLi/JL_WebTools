@@ -1,22 +1,57 @@
 <template>
     <div>
-        <section class="party-section bg-dark">
+        <section class="party-section bg-primary">
             <b-container class="h-100" fluid>
                 <b-row class="h-100">
                     <b-col lg="9" class="mt-1 mb-4">
                         <b-card class="shadow h-100">
                             <youtube
                                 class="videoBox"
-                                video-id="E8ePa1X7-YQ"
+                                video-id="ScMzIvxBSi4"
                                 player-width="100%"
                                 player-height="100%"
                                 host="https://www.youtube-nocookie.com"
-                                :player-vars="{autoplay: 1, controls: 0, disablekb: 1}"
+                                :player-vars="{autoplay: 0, controls: 0, disablekb: 1}"
                                 @ready="ready"
                                 @playing="playing"
                             ></youtube>
-                            <b-button @click="pause">pause</b-button>
-                            <b-button @click="play">play</b-button>
+                            <div class="playerControls">
+                                <div class="videoLength">
+                                    <input
+                                        id="videoLengthRange"
+                                        class="videoLengthSlider"
+                                        type="range"
+                                        :max="party.currVideo.length"
+                                        :value="party.currVideo.currTime"
+                                    />
+                                </div>
+                                <button class="video-btn b-right playButton" @click="play">
+                                    <!-- IF playing -> Change icon -->
+                                    <font-awesome-icon icon="play" />
+                                </button>
+                                <button class="video-btn b-right stopButton" @click="pause">
+                                    <font-awesome-icon icon="pause" />
+                                </button>
+                                <div class="infoControl">
+                                    <span class="time">1:23 / 1:31:54</span>
+                                </div>
+                                <div class="volumenControl">
+                                    <button class="video-btn b-right b-left volumenButton">
+                                        <font-awesome-icon icon="volume-up" />
+                                    </button>
+                                    <b-form-input
+                                        id="volumenRange"
+                                        class="volumenSilder"
+                                        type="range"
+                                        min="0"
+                                        max="100"
+                                        value="50"
+                                    ></b-form-input>
+                                </div>
+                                <button class="video-btn b-left settingButton">
+                                    <font-awesome-icon icon="cog" />
+                                </button>
+                            </div>
                         </b-card>
                     </b-col>
 
@@ -78,13 +113,34 @@ export default {
         return {
             message: '',
             messages: [],
+
             timeInterval: null,
+
             party: {
-                currVideo: '',
-                currPlayer: '',
-                currTime: '',
+                id: '',
+                host: '',
                 user: '',
-                id: ''
+                currPlayer: '',
+
+                currVideo: {
+                    id: '',
+                    length: '',
+                    currTime: ''
+                },
+
+                prevVideo: {
+                    id: '',
+                    length: ''
+                },
+
+                queue: {
+                    yt: [
+                        {
+                            videoId: '',
+                            title: ''
+                        }
+                    ]
+                }
             }
         };
     },
@@ -100,30 +156,39 @@ export default {
 
     mounted() {
         this.party.id = this.$route.params.id;
-        // TODO: Check if room exsits - if not - push to /jl2g for creation (error swal)
 
         // -------------------------------------------------------
         // Socket Events
         let vm = this;
         let interval = setInterval(() => {
             if (vm.socket != null) {
-                // Party Chat
-                vm.socket.on('messageRecived', vm.messageRecived);
-
-                // Sync Data
-                vm.socket.on('syncPartyData', vm.syncPartyData);
-                vm.socket.on('userCount', vm.partyUserCount);
-
                 // initial Party join check
                 vm.socket.emit('joinParty', vm.party.id, vm.username);
                 vm.socket.on('partyDontExists', vm.partyDontExists);
+
+                // Sync Data
+                vm.socket.on('syncInitPartyData', vm.syncInitPartyData);
+                vm.socket.on('userCount', vm.partyUserCount);
+
+                // Party Chat
+                vm.socket.on('messageRecived', vm.messageRecived);
 
                 clearInterval(interval);
             }
         }, 100);
 
+        // Video Curr Time Bar color stuff :D
+        document.getElementById('videoLengthRange').oninput = function() {
+            this.style.background =
+                'linear-gradient(to right, #FF6600 0%, #FF6600 ' +
+                this.value +
+                '%, #bbb ' +
+                this.value +
+                '%, #bbb 100%)';
+        };
+
         // Chat automatic scroll to bottom
-        //this.scrollToBottom();
+        this.scrollToBottom();
     },
 
     methods: {
@@ -138,10 +203,12 @@ export default {
 
         // -------------------------------------------------------
         // Synce Party Data
-        syncPartyData(currVideo, currPlayer, currTime) {
-            this.party.currVideo = currVideo;
-            this.party.currPlayer = currPlayer;
-            this.party.currTime = currTime;
+        syncInitPartyData(party) {
+            this.party.host = party.host;
+            this.party.currPlayer = party.currPlayer;
+            this.party.currVideo = party.currVideo;
+            this.party.prevVideo = party.prevVideo;
+            this.party.queue = party.queue;
         },
 
         partyUserCount(count) {
@@ -183,6 +250,9 @@ export default {
             }, 500);
         },
 
+        // -------------------------------------------------------
+        // DEV SHIT---- TODO: NEEEEEEEED CLEANUP AND SHIT
+
         ended() {
             clearInterval(this.timeInterval);
         },
@@ -221,7 +291,7 @@ export default {
 
 <style lang="scss" scoped>
 .videoBox {
-    height: 90% !important;
+    height: calc(100% - 40px);
 }
 
 .chatbox {

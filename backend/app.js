@@ -18,9 +18,9 @@ io.on('connection', (socket) => {
     socket.on('disconnect', (data) => {
 
         // User Room count on disconnect
-        if (socket.roomid) {
-            if (io.sockets.adapter.rooms[socket.roomid]) {
-                io.in(socket.roomid).emit('userCount', io.sockets.adapter.rooms[socket.roomid].length);
+        if (socket.roomId) {
+            if (io.sockets.adapter.rooms[socket.roomId]) {
+                io.in(socket.roomId).emit('userCount', io.sockets.adapter.rooms[socket.roomId].length);
             }
         }
 
@@ -35,14 +35,32 @@ io.on('connection', (socket) => {
         // join room with uniq ID
         socket.join(id);
 
-        // Set Room Data once on room creation
+        // set roomId and host
         io.sockets.adapter.rooms[id].id = id;
-        io.sockets.adapter.rooms[id].currVideo = 'Dqb2KY6F4iw';
+        io.sockets.adapter.rooms[id].host = socket.id;
+
+        // Set Room Data once on room creation with default Placeholder Video
         io.sockets.adapter.rooms[id].currPlayer = 'yt';
-        io.sockets.adapter.rooms[id].currTime = '0';
+
+        io.sockets.adapter.rooms[id].currVideo = {
+            id: 'ScMzIvxBSi4',
+            length: '94.301',
+            currTime: '0.000'
+        };
+
+        io.sockets.adapter.rooms[id].prevVideo = {
+            id: 'prevVideoID',
+            length: 'prevVideoLength',
+        };
+
+        io.sockets.adapter.rooms[id].queue = {
+            yt: [{
+                videoId: 'queueID',
+                title: 'sadasda'
+            }]
+        };
 
         // add room to global array
-        console.log(io.sockets.adapter.rooms[id].id);
         rooms.push(io.sockets.adapter.rooms[id].id);
 
         // emit room id back to client
@@ -56,14 +74,14 @@ io.on('connection', (socket) => {
 
         // Check if room exists
         if (io.sockets.adapter.rooms[id] === undefined) {
-            console.log('Party dont Exsits');
+
             return socket.emit('partyDontExists');
 
         } else {
 
-            // join room with ID
+            // join room with ID and set roomId on Socket
             socket.join(id);
-            socket.roomid = id;
+            socket.roomId = id;
 
             // set username if given - else set uniqid
             if (username) {
@@ -72,11 +90,9 @@ io.on('connection', (socket) => {
                 socket.username = 'User-' + uniqid.time();
             }
 
-            // Sync all room data
-            io.in(id).emit('syncPartyData',
-                io.sockets.adapter.rooms[id].currVideo,
-                io.sockets.adapter.rooms[id].currPlayer,
-                io.sockets.adapter.rooms[id].currTime
+            // Sync initial all room data
+            io.in(id).emit('syncInitPartyData',
+                io.sockets.adapter.rooms[id]
             );
 
             // emit to user counter
