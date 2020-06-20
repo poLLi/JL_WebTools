@@ -10,7 +10,8 @@
                                 video-id="E8ePa1X7-YQ"
                                 player-width="100%"
                                 player-height="100%"
-                                :player-vars="{autoplay: 1}"
+                                host="https://www.youtube-nocookie.com"
+                                :player-vars="{autoplay: 1, controls: 0, disablekb: 1}"
                                 @ready="ready"
                                 @playing="playing"
                             ></youtube>
