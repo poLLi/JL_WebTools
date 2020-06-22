@@ -7,6 +7,7 @@
                         <b-card class="shadow h-100">
                             <youtube
                                 class="videoBox"
+                                id="youtubePlayer"
                                 video-id="ScMzIvxBSi4"
                                 player-width="100%"
                                 player-height="100%"
@@ -35,17 +36,27 @@
                                 </div>
                                 <button class="video-btn b-right playButton" @click="play">
                                     <!-- IF playing -> Change icon -->
-                                    <font-awesome-icon icon="play" />
-                                </button>
-                                <button class="video-btn b-right stopButton" @click="pause">
-                                    <font-awesome-icon icon="pause" />
+                                    <font-awesome-icon v-if="!playerControls.playing" icon="play" />
+                                    <font-awesome-icon v-if="playerControls.playing" icon="pause" />
                                 </button>
                                 <div class="infoControl">
-                                    <span class="time">1:23 / 1:31:54</span>
+                                    <span
+                                        class="time"
+                                    >{{ playerControls.currRealTime }} / {{ playerControls.length }}</span>
                                 </div>
                                 <div class="volumenControl">
-                                    <button class="video-btn b-right b-left volumenButton">
-                                        <font-awesome-icon icon="volume-up" />
+                                    <button
+                                        class="video-btn b-right b-left volumenButton"
+                                        @click="onVolumenMute"
+                                    >
+                                        <font-awesome-icon
+                                            v-if="!playerControls.mute"
+                                            icon="volume-up"
+                                        />
+                                        <font-awesome-icon
+                                            v-if="playerControls.mute"
+                                            icon="volume-mute"
+                                        />
                                     </button>
                                     <b-form-input
                                         id="volumenRange"
@@ -53,11 +64,18 @@
                                         type="range"
                                         min="0"
                                         max="100"
-                                        value="50"
+                                        :value="playerControls.volume"
+                                        @change="onVolumeUpdate"
                                     ></b-form-input>
                                 </div>
                                 <button class="video-btn b-left settingButton">
                                     <font-awesome-icon icon="cog" />
+                                </button>
+                                <button
+                                    class="video-btn b-left fullscreenButton"
+                                    @click="onFullscreen"
+                                >
+                                    <font-awesome-icon icon="expand" />
                                 </button>
                             </div>
                         </b-card>
@@ -153,8 +171,11 @@ export default {
 
             playerControls: {
                 currTime: '0',
-                lenght: '0',
-                volumen: '10'
+                currRealTime: '0',
+                length: '0',
+                volume: '20',
+                mute: false,
+                playing: false
             }
         };
     },
@@ -194,11 +215,11 @@ export default {
         // Chat automatic scroll to bottom
         this.scrollToBottom();
 
+        // -------------------------------------------------------
+        // PlayerRangeSilder Mouseover
         var slider = document.getElementById('videoLengthRange');
-
         var sliderOffsetX = slider.getBoundingClientRect().left - document.documentElement.getBoundingClientRect().left;
         var sliderOffsetY = slider.getBoundingClientRect().top - document.documentElement.getBoundingClientRect().top;
-
         var sliderWidth = slider.offsetWidth;
 
         slider.addEventListener('mousemove', function(event) {
@@ -221,17 +242,138 @@ export default {
         },
 
         // -------------------------------------------------------
-        // Synce Party Data
-        syncInitPartyData(party) {
-            this.party.host = party.host;
-            this.party.currPlayer = party.currPlayer;
-            this.party.currVideo = party.currVideo;
-            this.party.prevVideo = party.prevVideo;
-            this.party.queue = party.queue;
+        // Video Player Control Functions
+        startTimeRangeInterval() {
+            let vm = this;
+
+            let timeRangeInterval = setInterval(() => {
+                vm.playerControls.currTime = vm.player.getCurrentTime();
+
+                let seconds = Math.round(vm.playerControls.currTime);
+                vm.playerControls.currRealTime = vm.convertToTime(seconds);
+            }, 100);
         },
 
-        partyUserCount(count) {
-            this.party.user = count;
+        stopTimeRangeInterval() {
+            clearInterval(this.timeRangeInterval);
+        },
+
+        onRangeUpdate(event) {
+            console.log('change: playtime to - ' + event.target.value);
+            this.player.seekTo(event.target.value);
+
+            // TODO: Sync new Time with Party
+        },
+
+        onVolumeUpdate() {
+            console.log('change: volume to - ' + event.target.value);
+            this.player.setVolume(event.target.value);
+
+            this.playerControls.mute = false;
+            this.player.unMute();
+        },
+
+        onVolumenMute() {
+            if (this.player.isMuted()) {
+                this.playerControls.mute = false;
+                this.player.unMute();
+            } else {
+                this.playerControls.mute = true;
+                this.player.mute();
+            }
+        },
+
+        onFullscreen() {
+            var iframe = document.getElementById('youtubePlayer');
+
+            let requestFullScreen =
+                iframe.requestFullScreen || iframe.mozRequestFullScreen || iframe.webkitRequestFullScreen;
+            if (requestFullScreen) {
+                requestFullScreen.bind(iframe)();
+            }
+        },
+
+        ready(event) {
+            this.player = event.target;
+            console.log('ready');
+
+            // Autoplay at synced currTime
+            setTimeout(() => {
+                this.player.seekTo(this.party.currVideo.currTime);
+                this.player.setVolume('20');
+
+                // play Kappa
+                this.play();
+
+                // set playercontrols
+                this.playerControls.playing = true;
+
+                let seconds = Math.round(this.player.getDuration());
+                this.playerControls.length = this.convertToTime(seconds);
+            }, 500);
+
+            // start sync Time
+            this.syncCurrTime();
+        },
+
+        play() {
+            if (this.playerControls.playing) {
+                // PAUSE PLAYBACK
+                this.player.pauseVideo();
+                this.stopSyncCurrTime();
+                this.stopTimeRangeInterval();
+
+                this.playerControls.playing = false;
+                console.log('pause');
+
+                // TODO: Sync video pause with Party
+            } else {
+                // PLAY PLAYBACK
+                this.player.playVideo();
+                this.startTimeRangeInterval();
+
+                this.playerControls.playing = true;
+                console.log('play');
+
+                // TODO: Sync play event with Party
+            }
+        },
+
+        playing(event) {
+            // The player is playing a video.
+            console.log('playing');
+            console.log(event);
+
+            this.playerControls.playing = true;
+        },
+
+        change() {
+            // when you change the value, the player will also change.
+            // If you would like to change `playerVars`, please change it before you change `videoId`.
+            // If `playerVars.autoplay` is 1, `loadVideoById` will be called.
+            // If `playerVars.autoplay` is 0, `cueVideoById` will be called.
+            this.videoId = 'another video id';
+
+            // TODO: Sync new Video with Party
+        },
+
+        stop() {
+            this.player.stopVideo();
+            this.stopSyncCurrTime();
+            this.stopTimeRangeInterval();
+
+            this.playerControls.playing = false;
+
+            console.log('stop');
+
+            // TODO: Sync video stop with Party
+        },
+
+        ended() {
+            this.stopSyncCurrTime();
+            this.stopTimeRangeInterval();
+
+            this.playerControls.playing = false;
         },
 
         // -------------------------------------------------------
@@ -253,20 +395,21 @@ export default {
         },
 
         // -------------------------------------------------------
-        // Party Video Functions
-        ready(event) {
-            this.player = event.target;
-            console.log('ready');
-
-            // Autoplay at synced currTime
-            this.player.seekTo(this.party.currVideo.currTime);
-            setTimeout(() => {
-                this.play();
-            }, 500);
-
-            // start sync Time
-            this.syncCurrTime();
+        // Synce Party Data
+        syncInitPartyData(party) {
+            this.party.host = party.host;
+            this.party.currPlayer = party.currPlayer;
+            this.party.currVideo = party.currVideo;
+            this.party.prevVideo = party.prevVideo;
+            this.party.queue = party.queue;
         },
+
+        partyUserCount(count) {
+            this.party.user = count;
+        },
+
+        // -------------------------------------------------------
+        // Party Video Functions
 
         // Sync time to socket server (only if host)
         syncCurrTime() {
@@ -284,62 +427,29 @@ export default {
         },
 
         // -------------------------------------------------------
-        // Video Player Control Functions
-        startTimeRangeInterval() {
-            let vm = this;
-
-            let timeRangeInterval = setInterval(() => {
-                vm.playerControls.currTime = vm.player.getCurrentTime();
-            }, 100);
-        },
-
-        stopTimeRangeInterval() {
-            clearInterval(this.timeRangeInterval);
-        },
-
-        onRangeUpdate(event) {
-            console.log(event.target.value);
-        },
-
-        // -------------------------------------------------------
         // DEV SHIT---- TODO: NEEEEEEEED CLEANUP AND SHIT
+        convertToTime(seconds) {
+            var hours = Math.floor(seconds / 3600);
+            var minutes = Math.floor((seconds - hours * 3600) / 60);
+            var seconds = seconds - hours * 3600 - minutes * 60;
+            var time = '';
 
-        ended() {
-            this.stopSyncCurrTime();
-            this.stopTimeRangeInterval();
-        },
+            if (hours != 0) {
+                time = hours + ':';
+            }
 
-        playing(event) {
-            // The player is playing a video.
-            console.log('playing');
-        },
-        play() {
-            // The player is playing a video.
-            this.player.playVideo();
-            this.startTimeRangeInterval();
+            if (minutes != 0 || time !== '') {
+                minutes = minutes < 10 && time !== '' ? '0' + minutes : String(minutes);
+                time += minutes + ':';
+            }
 
-            console.log('play');
-        },
-        change() {
-            // when you change the value, the player will also change.
-            // If you would like to change `playerVars`, please change it before you change `videoId`.
-            // If `playerVars.autoplay` is 1, `loadVideoById` will be called.
-            // If `playerVars.autoplay` is 0, `cueVideoById` will be called.
-            this.videoId = 'another video id';
-        },
-        stop() {
-            this.player.stopVideo();
-            this.stopSyncCurrTime();
-            this.stopTimeRangeInterval();
+            if (time === '') {
+                time = seconds + 's';
+            } else {
+                time += seconds < 10 ? '0' + seconds : String(seconds);
+            }
 
-            console.log('stop');
-        },
-        pause() {
-            this.player.pauseVideo();
-            this.stopSyncCurrTime();
-            this.stopTimeRangeInterval();
-
-            console.log('pause');
+            return time;
         }
     }
 };
