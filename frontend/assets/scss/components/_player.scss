@@ -113,4 +113,44 @@
             margin: auto;
         }
     }
+
+    .settingsButton {
+        display: inline !important;
+
+        &:hover, &:focus {
+            outline: none !important;
+            border: none !important;
+            text-decoration: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-primary{
+            color: #000;
+            background-color: transparent;
+            border-color: transparent;
+            border: none !important;
+            padding: 0rem 0.75rem;
+    
+            &:focus {
+                box-shadow: none !important;
+            }
+        }
+    }
+}
+
+.btn-player-settings {
+    color: #000;
+        background-color: transparent;
+        border-color: transparent;
+        border: none !important;
+        padding: 0rem 0.75rem;
+
+        &:hover {
+            color: #fff;
+            background-color:#ee3e0d;
+        }
+
+        &:focus {
+            box-shadow: none !important;
+        }
 }

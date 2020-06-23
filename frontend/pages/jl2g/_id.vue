@@ -68,9 +68,84 @@
                                         @change="onVolumeUpdate"
                                     ></b-form-input>
                                 </div>
-                                <button class="video-btn b-left settingButton">
-                                    <font-awesome-icon icon="cog" />
-                                </button>
+
+                                <b-dropdown
+                                    variant="link"
+                                    class="settingsButton"
+                                    toggle-class="text-decoration-none video-btn b-left"
+                                    dropup
+                                    right
+                                    no-caret
+                                >
+                                    <template v-slot:button-content>
+                                        <font-awesome-icon icon="cog" />
+                                    </template>
+
+                                    <b-dropdown-header id="dropdown-header-label">Settings</b-dropdown-header>
+
+                                    <b-button
+                                        id="popover-quallity"
+                                        variant="primary"
+                                        ref="button"
+                                        class="text-left"
+                                        block
+                                    >Quallity</b-button>
+
+                                    <b-button
+                                        id="popover-speed"
+                                        variant="primary"
+                                        ref="button"
+                                        class="text-left"
+                                        block
+                                    >Playback</b-button>
+
+                                    <b-popover
+                                        target="popover-quallity"
+                                        triggers="hover"
+                                        placement="left"
+                                    >
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setQuality('hd1080')"
+                                        >1080p</b-button>
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setQuality('hd720')"
+                                        >720p</b-button>
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setQuality('tiny')"
+                                        >480p</b-button>
+                                    </b-popover>
+
+                                    <b-popover
+                                        target="popover-speed"
+                                        triggers="hover"
+                                        placement="left"
+                                    >
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setPlaybackRate(0.25)"
+                                        >0.25x</b-button>
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setPlaybackRate(0.5)"
+                                        >0.50x</b-button>
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setPlaybackRate(1)"
+                                        >Normal</b-button>
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setPlaybackRate(1.5)"
+                                        >1.50x</b-button>
+                                        <b-button
+                                            class="btn-block btn-player-settings"
+                                            @mousedown="setPlaybackRate(2)"
+                                        >2x</b-button>
+                                    </b-popover>
+                                </b-dropdown>
+
                                 <button
                                     class="video-btn b-left fullscreenButton"
                                     @click="onFullscreen"
@@ -293,6 +368,18 @@ export default {
             }
         },
 
+        setQuality(q) {
+            this.player.setPlaybackQuality(q);
+            console.log('change: quality to - ' + q);
+        },
+
+        setPlaybackRate(r) {
+            this.player.setPlaybackRate(r);
+            console.log('change: playbackrate to - ' + r);
+
+            // TODO: Sync new PlaybackRate with Party
+        },
+
         ready(event) {
             this.player = event.target;
             console.log('ready');
@@ -450,6 +537,10 @@ export default {
             }
 
             return time;
+        },
+
+        test() {
+            console.log('tessssssssssssssssssssssssst');
         }
     }
 };
