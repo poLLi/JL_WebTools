@@ -539,28 +539,6 @@ export default {
             }
         },
 
-        syncToClient(currTime) {
-            if (this.socket.id === this.party.host) {
-                return;
-            } else {
-                this.party.currVideo.currTime = currTime;
-
-                if (
-                    !(
-                        this.playerControls.currTime <= this.party.currVideo.currTime + 1 &&
-                        this.playerControls.currTime >= this.party.currVideo.currTime - 1
-                    )
-                ) {
-                    this.player.seekTo(this.party.currVideo.currTime);
-
-                    console.log('OUT OF SYNC !!!!!!!!!');
-
-                    console.log(this.party.currVideo.currTime);
-                    console.log(this.playerControls.currTime);
-                }
-            }
-        },
-
         syncPlay() {
             this.player.playVideo();
             console.log('play');
