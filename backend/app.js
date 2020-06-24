@@ -43,20 +43,20 @@ io.on('connection', (socket) => {
         io.sockets.adapter.rooms[id].currPlayer = 'yt';
 
         io.sockets.adapter.rooms[id].currVideo = {
-            id: 'ScMzIvxBSi4',
-            length: '94.301',
+            id: 'N_COP5clGzw',
+            length: '44.861',
             currTime: '0.000'
         };
 
         io.sockets.adapter.rooms[id].prevVideo = {
-            id: 'prevVideoID',
-            length: 'prevVideoLength',
+            id: '',
+            length: '',
         };
 
         io.sockets.adapter.rooms[id].queue = {
             yt: [{
-                videoId: 'queueID',
-                title: 'sadasda'
+                videoId: '',
+                title: ''
             }]
         };
 
@@ -99,21 +99,33 @@ io.on('connection', (socket) => {
             io.in(id).emit('userCount', io.sockets.adapter.rooms[id].length);
             console.log('Party joined: ' + id);
         }
-
-
     });
 
     // -------------------------------------------------------
     // Party Sync
+    socket.on('syncHost', id => {
+        io.in(id).emit('hostSync');
+    });
 
-    socket.on('syncCurrVideoTime', (id, currVideoTime) => {
-        if (io.sockets.adapter.rooms[id] !== undefined) {
-            console.log('---------- SYNC TIME START -----------');
-            io.sockets.adapter.rooms[id].currVideo.currTime = currVideoTime;
-            console.log(io.sockets.adapter.rooms[id].currVideo.currTime);
-            console.log('----------- SYNC TIME END ------------');
-        }
-    })
+    socket.on('setHostTime', (id, time, playing) => {
+        io.in(id).emit('clientSync', time, playing);
+    });
+
+    socket.on('syncPlay', id => {
+        io.in(id).emit('play');
+    });
+
+    socket.on('syncPause', id => {
+        io.in(id).emit('pause');
+    });
+
+    socket.on('syncJump', (id, time) => {
+        io.in(id).emit('jump', time);
+    });
+
+    socket.on('syncPlaybackRate', (id, rate) => {
+        io.in(id).emit('playbackRate', rate);
+    });
 
     // -------------------------------------------------------
     // Party Chat

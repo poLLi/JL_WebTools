@@ -8,13 +8,14 @@
                             <youtube
                                 class="videoBox"
                                 id="youtubePlayer"
-                                video-id="ScMzIvxBSi4"
+                                video-id="N_COP5clGzw"
                                 player-width="100%"
                                 player-height="100%"
                                 host="https://www.youtube-nocookie.com"
                                 :player-vars="{autoplay: 0, controls: 0, disablekb: 1}"
                                 @ready="ready"
                                 @playing="playing"
+                                @buffering="buffering"
                                 @ended="ended"
                             ></youtube>
                             <div class="playerControls">
@@ -215,7 +216,9 @@ export default {
             message: '',
             messages: [],
 
-            timeInterval: null,
+            timeOffset: 0,
+            timeOffsetInterval: null,
+            buff: true,
 
             party: {
                 id: '',
@@ -256,7 +259,8 @@ export default {
     },
 
     watch: {
-        messages: 'scrollToBottom'
+        messages: 'scrollToBottom',
+        playerControls: { currTime: 'testLoL' }
     },
 
     computed: mapGetters({
@@ -276,9 +280,19 @@ export default {
                 vm.socket.emit('joinParty', vm.party.id, vm.username);
                 vm.socket.on('partyDontExists', vm.partyDontExists);
 
+                // NEW SYNC SYSTEM
+                vm.socket.on('hostSync', vm.hostSync);
+                vm.socket.on('clientSync', vm.clientSync);
+
                 // Sync Data
                 vm.socket.on('syncInitPartyData', vm.syncInitPartyData);
+                vm.socket.on('syncToClient', vm.syncToClient);
                 vm.socket.on('userCount', vm.partyUserCount);
+
+                vm.socket.on('play', vm.syncPlay);
+                vm.socket.on('pause', vm.syncPause);
+                vm.socket.on('jump', vm.syncJump);
+                vm.socket.on('playbackRate', vm.syncPlaybackRate);
 
                 // Party Chat
                 vm.socket.on('messageRecived', vm.messageRecived);
@@ -287,6 +301,7 @@ export default {
             }
         }, 100);
 
+        // -------------------------------------------------------
         // Chat automatic scroll to bottom
         this.scrollToBottom();
 
@@ -334,10 +349,7 @@ export default {
         },
 
         onRangeUpdate(event) {
-            console.log('change: playtime to - ' + event.target.value);
-            this.player.seekTo(event.target.value);
-
-            // TODO: Sync new Time with Party
+            this.socket.emit('syncJump', this.party.id, event.target.value);
         },
 
         onVolumeUpdate() {
@@ -373,65 +385,59 @@ export default {
             console.log('change: quality to - ' + q);
         },
 
-        setPlaybackRate(r) {
-            this.player.setPlaybackRate(r);
-            console.log('change: playbackrate to - ' + r);
-
-            // TODO: Sync new PlaybackRate with Party
+        setPlaybackRate(rate) {
+            this.socket.emit('syncPlaybackRate', this.party.id, rate);
         },
 
         ready(event) {
             this.player = event.target;
             console.log('ready');
 
-            // Autoplay at synced currTime
             setTimeout(() => {
-                this.player.seekTo(this.party.currVideo.currTime);
+                this.player.playVideo();
+
                 this.player.setVolume('20');
-
-                // play Kappa
-                this.play();
-
-                // set playercontrols
                 this.playerControls.playing = true;
 
-                let seconds = Math.round(this.player.getDuration());
-                this.playerControls.length = this.convertToTime(seconds);
-            }, 500);
+                // Sync new time from host
+            }, 100);
 
-            // start sync Time
-            this.syncCurrTime();
+            let seconds = Math.round(this.player.getDuration());
+            this.playerControls.length = this.convertToTime(seconds);
         },
 
         play() {
             if (this.playerControls.playing) {
                 // PAUSE PLAYBACK
-                this.player.pauseVideo();
-                this.stopSyncCurrTime();
-                this.stopTimeRangeInterval();
-
-                this.playerControls.playing = false;
-                console.log('pause');
-
-                // TODO: Sync video pause with Party
+                this.socket.emit('syncPause', this.party.id);
             } else {
                 // PLAY PLAYBACK
-                this.player.playVideo();
-                this.startTimeRangeInterval();
-
-                this.playerControls.playing = true;
-                console.log('play');
-
-                // TODO: Sync play event with Party
+                this.socket.emit('syncPlay', this.party.id);
             }
         },
 
         playing(event) {
-            // The player is playing a video.
+            this.startTimeRangeInterval();
+            this.playerControls.playing = true;
+
+            if (this.buff) {
+                setTimeout(() => {
+                    // test diff in sync time
+                    let vm = this;
+                    this.timeOffset = 0;
+                    this.timeOffsetInterval = setInterval(() => {
+                        vm.timeOffset++;
+                    }, 1);
+
+                    this.socket.emit('syncHost', this.party.id);
+                    console.log('BUFFFFF sync host');
+                }, 1000);
+
+                this.buff = false;
+            }
+
             console.log('playing');
             console.log(event);
-
-            this.playerControls.playing = true;
         },
 
         change() {
@@ -444,9 +450,13 @@ export default {
             // TODO: Sync new Video with Party
         },
 
+        buffering() {
+            console.log('buffering');
+            this.buff = true;
+        },
+
         stop() {
             this.player.stopVideo();
-            this.stopSyncCurrTime();
             this.stopTimeRangeInterval();
 
             this.playerControls.playing = false;
@@ -457,7 +467,6 @@ export default {
         },
 
         ended() {
-            this.stopSyncCurrTime();
             this.stopTimeRangeInterval();
 
             this.playerControls.playing = false;
@@ -491,26 +500,95 @@ export default {
             this.party.queue = party.queue;
         },
 
+        hostSync() {
+            if (this.socket.id === this.party.host) {
+                console.log('HOST SYNC !!!!!');
+                this.socket.emit(
+                    'setHostTime',
+                    this.party.id,
+                    this.player.getCurrentTime(),
+                    this.playerControls.playing
+                );
+            }
+        },
+
+        clientSync(time, playing) {
+            if (this.socket.id === this.party.host) {
+                return;
+            } else {
+                if (!(this.player.getCurrentTime() <= time + 1 && this.player.getCurrentTime() >= time - 1)) {
+                    // test diff in sync time
+                    console.log('diff: ' + this.timeOffset);
+
+                    this.party.currVideo.currTime = time;
+                    this.player.seekTo(time + this.timeOffset / 1000);
+
+                    if (this.playerControls.playing != playing) {
+                        if (!playing) {
+                            this.syncPause();
+                        } else {
+                            this.syncPlay();
+                        }
+                    }
+
+                    if (this.timeOffsetInterval != null) {
+                        clearInterval(this.timeOffsetInterval);
+                        this.timeOffsetInterval = null;
+                    }
+                }
+            }
+        },
+
+        syncToClient(currTime) {
+            if (this.socket.id === this.party.host) {
+                return;
+            } else {
+                this.party.currVideo.currTime = currTime;
+
+                if (
+                    !(
+                        this.playerControls.currTime <= this.party.currVideo.currTime + 1 &&
+                        this.playerControls.currTime >= this.party.currVideo.currTime - 1
+                    )
+                ) {
+                    this.player.seekTo(this.party.currVideo.currTime);
+
+                    console.log('OUT OF SYNC !!!!!!!!!');
+
+                    console.log(this.party.currVideo.currTime);
+                    console.log(this.playerControls.currTime);
+                }
+            }
+        },
+
+        syncPlay() {
+            this.player.playVideo();
+            console.log('play');
+        },
+
+        syncPause() {
+            this.player.pauseVideo();
+
+            //this.stopSyncToServer();
+            this.stopTimeRangeInterval();
+            this.playerControls.playing = false;
+
+            console.log('pause');
+        },
+
+        syncJump(newTime) {
+            this.player.seekTo(newTime);
+
+            console.log('change: seekTo - ' + newTime);
+        },
+
+        syncPlaybackRate(rate) {
+            this.player.setPlaybackRate(rate);
+            console.log('change: playbackrate to - ' + rate);
+        },
+
         partyUserCount(count) {
             this.party.user = count;
-        },
-
-        // -------------------------------------------------------
-        // Party Video Functions
-
-        // Sync time to socket server (only if host)
-        syncCurrTime() {
-            let vm = this;
-            this.timeInterval = setInterval(() => {
-                if (vm.socket.id === vm.party.host) {
-                    vm.socket.emit('syncCurrVideoTime', vm.party.id, vm.player.getCurrentTime());
-                }
-            }, 1000);
-        },
-
-        // Stop Sync time to socket server
-        stopSyncCurrTime() {
-            clearInterval(this.timeInterval);
         },
 
         // -------------------------------------------------------
