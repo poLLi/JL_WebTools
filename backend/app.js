@@ -108,6 +108,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('setHostTime', (id, time, playing) => {
+        io.sockets.adapter.rooms[id].currVideo.currTime = time;
         io.in(id).emit('clientSync', time, playing);
     });
 
@@ -120,11 +121,21 @@ io.on('connection', (socket) => {
     });
 
     socket.on('syncJump', (id, time) => {
+        io.sockets.adapter.rooms[id].currVideo.currTime = time;
         io.in(id).emit('jump', time);
     });
 
     socket.on('syncPlaybackRate', (id, rate) => {
         io.in(id).emit('playbackRate', rate);
+    });
+
+    socket.on('changeCurrVideo', (id, newVideoId) => {
+        io.sockets.adapter.rooms[id].currVideo.id = newVideoId;
+        io.sockets.adapter.rooms[id].currVideo.currTime = '0';
+        io.sockets.adapter.rooms[id].currVideo.length = '0';
+
+        io.in(id).emit('change', io.sockets.adapter.rooms[id].currVideo);
+        console.log(io.sockets.adapter.rooms[id].currVideo);
     });
 
     // -------------------------------------------------------

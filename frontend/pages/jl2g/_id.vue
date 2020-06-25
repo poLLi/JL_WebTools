@@ -8,7 +8,7 @@
                             <youtube
                                 class="videoBox"
                                 id="youtubePlayer"
-                                video-id="N_COP5clGzw"
+                                :video-id="party.currVideo.id"
                                 player-width="100%"
                                 player-height="100%"
                                 host="https://www.youtube-nocookie.com"
@@ -193,7 +193,13 @@
                 <b-row align-h="center" class="text-center text-white">
                     <b-col lg="8">
                         <h2 class="mt-0">Socket.IO Test</h2>
-                        <hr class="divider light mt-4" />asdasd
+                        <hr class="divider light mt-4" />
+                        <b-form-input
+                            v-model="searchbar"
+                            type="text"
+                            placeholder="Type new Video ID here..."
+                            @keyup.enter="change"
+                        ></b-form-input>
                     </b-col>
                 </b-row>
             </b-container>
@@ -215,6 +221,8 @@ export default {
         return {
             message: '',
             messages: [],
+
+            searchbar: '',
 
             timeOffset: 0,
             timeOffsetInterval: null,
@@ -280,19 +288,18 @@ export default {
                 vm.socket.emit('joinParty', vm.party.id, vm.username);
                 vm.socket.on('partyDontExists', vm.partyDontExists);
 
-                // NEW SYNC SYSTEM
+                // SYNC Stuff
                 vm.socket.on('hostSync', vm.hostSync);
                 vm.socket.on('clientSync', vm.clientSync);
-
-                // Sync Data
                 vm.socket.on('syncInitPartyData', vm.syncInitPartyData);
-                vm.socket.on('syncToClient', vm.syncToClient);
                 vm.socket.on('userCount', vm.partyUserCount);
 
                 vm.socket.on('play', vm.syncPlay);
                 vm.socket.on('pause', vm.syncPause);
                 vm.socket.on('jump', vm.syncJump);
                 vm.socket.on('playbackRate', vm.syncPlaybackRate);
+
+                vm.socket.on('change', vm.syncChangeVideo);
 
                 // Party Chat
                 vm.socket.on('messageRecived', vm.messageRecived);
@@ -319,6 +326,11 @@ export default {
             slider.value = sliderValAtPos;
             slider.setAttribute('style', 'display: block;');
         });
+    },
+
+    beforeDestroy() {
+        this.stopTimeRangeInterval();
+        clearInterval(this.timeOffsetInterval);
     },
 
     methods: {
@@ -398,12 +410,7 @@ export default {
 
                 this.player.setVolume('20');
                 this.playerControls.playing = true;
-
-                // Sync new time from host
             }, 100);
-
-            let seconds = Math.round(this.player.getDuration());
-            this.playerControls.length = this.convertToTime(seconds);
         },
 
         play() {
@@ -417,9 +424,6 @@ export default {
         },
 
         playing(event) {
-            this.startTimeRangeInterval();
-            this.playerControls.playing = true;
-
             if (this.buff) {
                 setTimeout(() => {
                     // test diff in sync time
@@ -436,17 +440,29 @@ export default {
                 this.buff = false;
             }
 
+            // Set Video Duration Time
+            let seconds = Math.round(this.player.getDuration());
+            this.playerControls.length = this.convertToTime(seconds);
+
+            // Set Video progressbar / RangeSlider
+            this.party.currVideo.length = this.player.getDuration();
+
+            // Start Video timestamp
+            this.startTimeRangeInterval();
+
+            this.playerControls.playing = true;
             console.log('playing');
+
+            // DEV
             console.log(event);
         },
 
         change() {
-            // when you change the value, the player will also change.
-            // If you would like to change `playerVars`, please change it before you change `videoId`.
-            // If `playerVars.autoplay` is 1, `loadVideoById` will be called.
-            // If `playerVars.autoplay` is 0, `cueVideoById` will be called.
-            this.videoId = 'another video id';
+            this.socket.emit('syncPause', this.party.id);
+            this.socket.emit('changeCurrVideo', this.party.id, this.searchbar);
+            this.searchbar = '';
 
+            console.log('change: New Video!');
             // TODO: Sync new Video with Party
         },
 
@@ -552,6 +568,15 @@ export default {
             this.playerControls.playing = false;
 
             console.log('pause');
+        },
+
+        syncChangeVideo(newVideo) {
+            console.log('NEW VIDEO');
+            console.log(newVideo);
+            this.party.currVideo.currTime = newVideo.currTime;
+            this.party.currVideo.id = newVideo.id;
+
+            this.play();
         },
 
         syncJump(newTime) {
