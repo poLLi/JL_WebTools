@@ -44,6 +44,11 @@ hr.light {
 
 .btn {
     font-family: $font-family-sans-serif;
+
+    &:focus,
+    &.focus {
+        outline: none !important;
+    }
 }
 
 .btn-xl {

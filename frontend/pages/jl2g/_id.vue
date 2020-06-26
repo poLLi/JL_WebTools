@@ -1,10 +1,16 @@
 <template>
     <div>
-        <section class="party-section bg-primary">
+        <section
+            class="party-section"
+            v-bind:class="{'bg-secondary': darkMode, 'bg-primary': !darkMode}"
+        >
             <b-container class="h-100" fluid>
                 <b-row class="h-100">
                     <b-col lg="9" class="mt-1 mb-4">
-                        <b-card class="shadow h-100">
+                        <b-card
+                            class="shadow h-100"
+                            v-bind:class="{'bg-dark text-white': darkMode, '': !darkMode}"
+                        >
                             <youtube
                                 class="videoBox"
                                 id="youtubePlayer"
@@ -14,6 +20,7 @@
                                 host="https://www.youtube-nocookie.com"
                                 :player-vars="{autoplay: 0, controls: 0, disablekb: 1}"
                                 @ready="ready"
+                                @paused="paused"
                                 @playing="playing"
                                 @buffering="buffering"
                                 @ended="ended"
@@ -158,29 +165,82 @@
                     </b-col>
 
                     <b-col lg="3" class="mb-4 mt-1 d-none d-lg-block d-xl-block">
-                        <b-card class="shadow h-100">
-                            <div class="chatbox">
-                                <span>User Connected: {{ party.user }}</span>
+                        <b-card
+                            class="shadow h-100"
+                            v-bind:class="{'bg-dark text-white': darkMode, '': !darkMode}"
+                        >
+                            <div class="sidebar">
+                                <b-button
+                                    squared
+                                    variant="outline-primary"
+                                    @click="selected = 'playlistTab'"
+                                >Videos</b-button>
+                                <b-button
+                                    squared
+                                    variant="outline-primary"
+                                    @click="selected = 'chatTab'"
+                                >Chat</b-button>
+                                <b-button
+                                    squared
+                                    variant="outline-primary float-right"
+                                    @click="selected = 'settingsTab'"
+                                >
+                                    <font-awesome-icon icon="cog" />
+                                </b-button>
                                 <hr />
 
-                                <ul ref="messages" class="messages">
-                                    <li
-                                        v-for="(message, index) in messages"
-                                        :key="index"
-                                        class="message"
-                                    >
-                                        <span class="chatUser">{{ message.username}}</span>
-                                        <p class="chatMsg">{{ message.msg}}</p>
-                                    </li>
-                                </ul>
+                                <!--------- SIDEBAR: Playlist --------->
+                                <div v-if="selected == 'playlistTab'">
+                                    <b-form-input
+                                        v-model="searchbar"
+                                        type="text"
+                                        placeholder="Type new Video ID here..."
+                                        @keyup.enter="change"
+                                        v-bind:class="{'bg-dark text-white': darkMode, '': !darkMode}"
+                                    ></b-form-input>
+                                </div>
 
-                                <input
-                                    v-model="message"
-                                    class="inputMessage"
-                                    type="text"
-                                    placeholder="Type here..."
-                                    @keyup.enter="sendMessage"
-                                />
+                                <!--------- SIDEBAR: Chat --------->
+                                <div v-if="selected == 'chatTab'">
+                                    <ul ref="messages" class="messages">
+                                        <li
+                                            v-for="(message, index) in messages"
+                                            :key="index"
+                                            class="message"
+                                        >
+                                            <span class="chatUser">{{ message.username}}</span>
+                                            <p class="chatMsg">{{ message.msg}}</p>
+                                        </li>
+                                    </ul>
+
+                                    <input
+                                        v-model="message"
+                                        class="inputMessage"
+                                        type="text"
+                                        placeholder="Type here..."
+                                        @keyup.enter="sendMessage"
+                                        v-bind:class="{'bg-dark text-white': darkMode, '': !darkMode}"
+                                    />
+                                </div>
+
+                                <!--------- SIDEBAR: User --------->
+                                <div v-if="selected == 'settingsTab'">
+                                    <span>
+                                        Connected User in Party:
+                                        <strong>{{ party.user }}</strong>
+                                    </span>
+                                    <hr />
+                                    <b-form-checkbox
+                                        switch
+                                        size="lg"
+                                        v-model="darkMode"
+                                    >Dark Background</b-form-checkbox>
+                                    <br />
+                                    <b-form-checkbox switch>adsa</b-form-checkbox>
+                                    <b-form-checkbox switch>asdasda</b-form-checkbox>
+                                    <b-form-checkbox switch>asdasd</b-form-checkbox>
+                                    <b-form-checkbox switch>asdasda</b-form-checkbox>
+                                </div>
                             </div>
                         </b-card>
                     </b-col>
@@ -188,7 +248,7 @@
             </b-container>
         </section>
 
-        <section class="page-section bg-primary">
+        <section class="page-section" v-bind:class="{'bg-primary': darkMode, 'bg-dark': !darkMode}">
             <b-container>
                 <b-row align-h="center" class="text-center text-white">
                     <b-col lg="8">
@@ -219,6 +279,9 @@ export default {
 
     data() {
         return {
+            darkMode: false,
+            selected: 'playlistTab',
+
             message: '',
             messages: [],
 
@@ -267,8 +330,7 @@ export default {
     },
 
     watch: {
-        messages: 'scrollToBottom',
-        playerControls: { currTime: 'testLoL' }
+        messages: 'scrollToBottom'
     },
 
     computed: mapGetters({
@@ -307,10 +369,6 @@ export default {
                 clearInterval(interval);
             }
         }, 100);
-
-        // -------------------------------------------------------
-        // Chat automatic scroll to bottom
-        this.scrollToBottom();
 
         // -------------------------------------------------------
         // PlayerRangeSilder Mouseover
@@ -421,6 +479,11 @@ export default {
                 // PLAY PLAYBACK
                 this.socket.emit('syncPlay', this.party.id);
             }
+        },
+
+        paused() {
+            // sync pause when clicked in video
+            this.socket.emit('syncPause', this.party.id);
         },
 
         playing(event) {
@@ -595,7 +658,18 @@ export default {
         },
 
         // -------------------------------------------------------
-        // DEV SHIT---- TODO: NEEEEEEEED CLEANUP AND SHIT
+        // Settings Tab
+        darkModeToggle() {
+            if (this.darkMode) {
+                this.darkMode = false;
+            } else {
+                this.darkMode = true;
+            }
+            console.log('asdasdasda');
+        },
+
+        // -------------------------------------------------------
+        // Time converter
         convertToTime(seconds) {
             var hours = Math.floor(seconds / 3600);
             var minutes = Math.floor((seconds - hours * 3600) / 60);
@@ -618,10 +692,6 @@ export default {
             }
 
             return time;
-        },
-
-        test() {
-            console.log('tessssssssssssssssssssssssst');
         }
     }
 };
@@ -632,14 +702,14 @@ export default {
     height: calc(100% - 40px);
 }
 
-.chatbox {
+.sidebar {
     height: 100%;
     position: relative;
 }
 
 .messages {
     position: absolute;
-    top: 45px;
+    top: 65px;
     bottom: 40px;
     width: 100%;
     margin: 0;

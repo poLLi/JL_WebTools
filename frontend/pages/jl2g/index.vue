@@ -4,17 +4,20 @@
             <b-container>
                 <b-row align-h="center" align-v="center">
                     <b-col lg="12" class="text-center">
-                        <h2 class="text-white my-0 py-0">It´s JL2G Party time!</h2>
+                        <h2 class="text-white my-0 py-0">Just-Look Together</h2>
                         <hr class="divider light mt-4" />
+                        <span class="text-white">Watch Video´s together with your Friends!</span>
                     </b-col>
                     <b-col lg="8" class="mt-5">
-                        <b-card class="shadow text-center p-4">
+                        <b-card class="shadow p-4">
                             <b-form @submit.stop.prevent>
+                                <!--
                                 <b-form-input
                                     id="userName"
                                     placeholder="Username (Optional)"
                                     v-model="party.username"
                                 ></b-form-input>
+                                -->
                                 <br />
                                 <b-button
                                     type="submit"
@@ -27,16 +30,16 @@
                     <b-col lg="4" class="mt-5">
                         <b-card class="shadow">
                             <b-form @submit.stop.prevent>
-                                <b-form-group
-                                    label="Enter Party ID and Username(Optional)"
-                                    label-for="userName"
-                                >
+                                <b-form-group label="Join a ongoing Party" label-for="roomID">
+                                    <!--
                                     <b-form-input
                                         id="userName"
                                         placeholder="Username (Optional)"
                                         v-model="party.username"
                                     ></b-form-input>
+                                    
                                     <br />
+                                    -->
                                     <b-form-input
                                         id="roomID"
                                         placeholder="Party ID"
@@ -45,7 +48,7 @@
                                 </b-form-group>
                                 <b-button
                                     type="submit"
-                                    variant="primary"
+                                    variant="primary btn-block"
                                     @click="joinParty()"
                                 >Join the fkn awesome Party!</b-button>
                             </b-form>
@@ -60,7 +63,12 @@
                 <b-row align-h="center">
                     <b-col lg="8" class="text-center text-white">
                         <h2 class="mt-0">What is Just-Look together?</h2>
-                        <hr class="divider light mt-4" />blalba
+                        <hr class="divider light mt-4" />
+                        <p>
+                            Just-Look Together is a service for you to watch Video with your Friends and Family.
+                            <br />(more like alone in ur basement, Kappa)
+                            <br />yea yea i know u....
+                        </p>
                         <!-- blablab info here -->
                     </b-col>
                 </b-row>
