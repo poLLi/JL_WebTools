@@ -253,14 +253,24 @@
             <b-container>
                 <b-row align-h="center" class="text-center text-white">
                     <b-col lg="8">
-                        <h2 class="mt-0">Socket.IO Test</h2>
+                        <h2 class="mt-0">Just-Look Togehter</h2>
                         <hr class="divider light mt-4" />
-                        <b-form-input
-                            v-model="searchbar"
-                            type="text"
-                            placeholder="Type new Video ID here..."
-                            @keyup.enter="change"
-                        ></b-form-input>
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt perferendis voluptatibus pariatur sit a quo sapiente, labore totam eveniet veritatis?</p>
+                    </b-col>
+                </b-row>
+            </b-container>
+        </section>
+
+        <section
+            class="page-section"
+            v-bind:class="{'bg-dark': darkMode, 'bg-secondary': !darkMode}"
+        >
+            <b-container>
+                <b-row align-h="center" class="text-center text-white">
+                    <b-col lg="8">
+                        <h2 class="mt-0">Just-Look Togehter</h2>
+                        <hr class="divider light mt-4" />
+                        <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Incidunt perferendis voluptatibus pariatur sit a quo sapiente, labore totam eveniet veritatis?</p>
                     </b-col>
                 </b-row>
             </b-container>
