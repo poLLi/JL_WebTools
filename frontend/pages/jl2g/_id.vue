@@ -196,6 +196,7 @@
                                         type="text"
                                         placeholder="Type new Video ID here..."
                                         @keyup.enter="change"
+                                        autocomplete="off"
                                         v-bind:class="{'bg-dark text-white': darkMode, '': !darkMode}"
                                     ></b-form-input>
                                 </div>

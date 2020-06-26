@@ -44,6 +44,7 @@
                                         id="roomID"
                                         placeholder="Party ID"
                                         v-model="party.id"
+                                        autocomplete="off"
                                     ></b-form-input>
                                 </b-form-group>
                                 <b-button
